@@ -1,0 +1,176 @@
+@import "tailwindcss";
+@config "../../tailwind.config.ts";
+
+@layer base {
+  :root {
+    /* Roomy Clean Modern Design System */
+    --background: 0 0% 100%;          /* #FFFFFF */
+    --foreground: 222 47% 11%;        /* #111827 Gray 900 */
+
+    --card: 210 20% 98%;              /* #F9FAFB Gray 50 */
+    --card-foreground: 222 47% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    --primary: 217 91% 60%;           /* #2563EB Blue 600 */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 25 95% 53%;          /* #F97316 Orange 500 */
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 210 20% 98%;             /* #F9FAFB Gray 50 */
+    --muted-foreground: 220 9% 46%;   /* #6B7280 Gray 500 */
+
+    --accent: 25 95% 53%;             /* #F97316 */
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;         /* #EF4444 Red 500 */
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 214 32% 91%;            /* #E5E7EB Gray 200 */
+    --input: 214 32% 91%;
+    --ring: 217 91% 60%;
+
+    --radius: 0.5rem;                 /* 8px */
+  }
+
+  /* 다크 모드 (향후 확장 대비) */
+  .dark {
+    --background: 222 47% 11%;
+    --foreground: 0 0% 98%;
+    --card: 222 47% 15%;
+    --card-foreground: 0 0% 98%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 25 95% 53%;
+    --secondary-foreground: 0 0% 100%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* 타이포그래피 기본 스타일 */
+  h1 {
+    @apply text-h1;
+  }
+
+  h2 {
+    @apply text-h2;
+  }
+
+  h3 {
+    @apply text-h3;
+  }
+
+  h4 {
+    @apply text-h4;
+  }
+
+  p {
+    @apply text-body;
+  }
+
+  /* 포커스 링 (접근성) */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2;
+  }
+
+  /* 스크롤바 스타일 (선택사항) */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-surface;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-border rounded-lg;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-text-secondary;
+  }
+}
+
+/* @TASK P2-T2.6 - 테마 시스템 CSS 변수 */
+@layer components {
+  /* 테마 루트 컨테이너 */
+  .theme-root {
+    background-color: var(--theme-background);
+    color: var(--theme-text);
+    font-family: var(--theme-font-family);
+    min-height: 100vh;
+  }
+
+  /* 테마 Primary 색상 */
+  .theme-primary {
+    color: var(--theme-primary);
+  }
+
+  .theme-bg-primary {
+    background-color: var(--theme-primary);
+  }
+
+  .theme-border-primary {
+    border-color: var(--theme-primary);
+  }
+
+  /* 테마 Accent 색상 */
+  .theme-accent {
+    color: var(--theme-accent);
+  }
+
+  .theme-bg-accent {
+    background-color: var(--theme-accent);
+  }
+
+  .theme-border-accent {
+    border-color: var(--theme-accent);
+  }
+
+  /* 테마 텍스트 색상 */
+  .theme-text {
+    color: var(--theme-text);
+  }
+
+  /* 테마 배경 색상 */
+  .theme-background {
+    background-color: var(--theme-background);
+  }
+
+  /* 테마 적용 버튼 스타일 */
+  .theme-button-primary {
+    background-color: var(--theme-primary);
+    color: white;
+  }
+
+  .theme-button-primary:hover {
+    opacity: 0.9;
+  }
+
+  /* 테마 적용 카드 스타일 */
+  .theme-card {
+    background-color: var(--theme-background);
+    border-color: var(--theme-primary);
+  }
+
+  /* @TASK P7-T7.3 - 랜딩 페이지 애니메이션 유틸리티 */
+  .animation-delay-2000 {
+    animation-delay: 2s;
+  }
+
+  .animation-delay-4000 {
+    animation-delay: 4s;
+  }
+}
