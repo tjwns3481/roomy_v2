@@ -1,9 +1,44 @@
 // @TASK P1-T1.8 - 블록 비즈니스 로직 서비스
 // @SPEC docs/planning/06-tasks.md#P1-T1.8
 
-import { createServerClient, createAdminClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/server';
+import { getAuthUserId } from '@/lib/clerk-auth';
 import { BlockType, BlockContent, blockContentSchemas } from '@/types/block';
 import { z } from 'zod';
+
+// ============================================================================
+// DB Column Mapping (DB uses different column names)
+// ============================================================================
+
+// DB 스키마의 블록 타입은 대문자를 사용합니다
+const BLOCK_TYPE_TO_DB: Record<BlockType, string> = {
+  hero: 'HERO',
+  quickInfo: 'QUICK_INFO',
+  amenities: 'AMENITIES',
+  rules: 'RULES',
+  map: 'MAP',
+  gallery: 'GALLERY',
+  notice: 'NOTICE',
+  custom: 'CUSTOM',
+};
+
+const DB_TO_BLOCK_TYPE: Record<string, BlockType> = {
+  HERO: 'hero',
+  QUICK_INFO: 'quickInfo',
+  AMENITIES: 'amenities',
+  RULES: 'rules',
+  MAP: 'map',
+  GALLERY: 'gallery',
+  NOTICE: 'notice',
+  CUSTOM: 'custom',
+};
+
+// CUID 생성 함수 (DB에서 사용하는 형식)
+function generateCuid(): string {
+  const timestamp = Date.now().toString(36);
+  const randomPart = Math.random().toString(36).substring(2, 15);
+  return `c${timestamp}${randomPart}`;
+}
 
 // ============================================================================
 // Types
@@ -18,6 +53,36 @@ export interface Block {
   is_visible: boolean;
   created_at: string;
   updated_at: string;
+}
+
+// DB row 타입 (실제 DB 컬럼명)
+interface DBBlockRow {
+  id: string;
+  guideId: string;
+  type: string;
+  order: number;
+  content: Record<string, unknown>;
+  createdAt: string;
+  updatedAt: string;
+  guidebook_id: string | null;
+  order_index: number;
+  is_visible: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+// DB row를 Block으로 변환
+function mapDBRowToBlock(row: DBBlockRow): Block {
+  return {
+    id: row.id,
+    guidebook_id: row.guideId || row.guidebook_id || '',
+    type: DB_TO_BLOCK_TYPE[row.type] || (row.type.toLowerCase() as BlockType),
+    order_index: row.order ?? row.order_index ?? 0,
+    content: row.content as BlockContent,
+    is_visible: row.is_visible ?? true,
+    created_at: row.createdAt || row.created_at,
+    updated_at: row.updatedAt || row.updated_at,
+  };
 }
 
 export interface CreateBlockInput {
@@ -89,13 +154,14 @@ export const BlockService = {
    * 가이드북의 모든 블록 조회
    */
   async getBlocksByGuidebookId(guidebookId: string): Promise<Block[]> {
-    const supabase = await createServerClient();
+    const supabase = createAdminClient();
 
+    // DB는 guideId 컬럼을 사용 (기존 Prisma 스키마)
     const { data, error } = await supabase
       .from('blocks')
       .select('*')
-      .eq('guidebook_id', guidebookId)
-      .order('order_index', { ascending: true });
+      .eq('guideId', guidebookId)
+      .order('order', { ascending: true });
 
     if (error) {
       throw new BlockServiceError(
@@ -105,14 +171,14 @@ export const BlockService = {
       );
     }
 
-    return (data || []) as unknown as Block[];
+    return (data || []).map((row: DBBlockRow) => mapDBRowToBlock(row));
   },
 
   /**
    * 단일 블록 조회
    */
   async getBlockById(blockId: string): Promise<Block | null> {
-    const supabase = await createServerClient();
+    const supabase = createAdminClient();
 
     const { data, error } = await supabase
       .from('blocks')
@@ -131,19 +197,24 @@ export const BlockService = {
       );
     }
 
-    return data as unknown as Block;
+    return mapDBRowToBlock(data as DBBlockRow);
   },
 
   /**
    * 블록 생성
    */
   async createBlock(input: CreateBlockInput): Promise<Block> {
-    const supabase = await createServerClient();
+    const supabase = createAdminClient();
+    const userId = await getAuthUserId();
 
-    // 1. 가이드북 존재 확인 (RLS가 자동으로 소유권 검증)
+    if (!userId) {
+      throw new BlockServiceError('인증이 필요합니다', 'UNAUTHORIZED', 401);
+    }
+
+    // 1. 가이드북 존재 및 소유권 확인
     const { data: guidebook, error: guidebookError } = await supabase
       .from('guidebooks')
-      .select('id')
+      .select('id, user_id')
       .eq('id', input.guidebook_id)
       .single();
 
@@ -152,6 +223,15 @@ export const BlockService = {
         '가이드북을 찾을 수 없습니다',
         'GUIDEBOOK_NOT_FOUND',
         404
+      );
+    }
+
+    // 소유권 확인
+    if (guidebook.user_id !== userId) {
+      throw new BlockServiceError(
+        '이 가이드북에 대한 권한이 없습니다',
+        'UNAUTHORIZED',
+        403
       );
     }
 
@@ -165,28 +245,38 @@ export const BlockService = {
       );
     }
 
-    // 3. order_index 계산 (없으면 마지막에 추가)
-    let orderIndex = input.order_index;
-    if (orderIndex === undefined) {
+    // 3. order 계산 (없으면 마지막에 추가) - DB는 'order' 컬럼 사용
+    let orderValue = input.order_index;
+    if (orderValue === undefined) {
       const { data: maxOrderData } = await supabase
         .from('blocks')
-        .select('order_index')
-        .eq('guidebook_id', input.guidebook_id)
-        .order('order_index', { ascending: false })
+        .select('order')
+        .eq('guideId', input.guidebook_id)
+        .order('order', { ascending: false })
         .limit(1)
         .single();
 
-      orderIndex = maxOrderData ? maxOrderData.order_index + 1 : 0;
+      orderValue = maxOrderData ? (maxOrderData.order as number) + 1 : 0;
     }
 
-    // 4. 블록 생성
+    // 4. 블록 생성 (DB 스키마에 맞춰 guideId, order, type 대문자 사용)
+    const blockId = generateCuid();
+    const now = new Date().toISOString();
+    const dbType = BLOCK_TYPE_TO_DB[input.type] || input.type.toUpperCase();
+
     const { data, error } = await supabase
       .from('blocks')
       .insert({
-        guidebook_id: input.guidebook_id,
-        type: input.type,
+        id: blockId,
+        guideId: input.guidebook_id,
+        type: dbType,
+        order: orderValue,
         content: validation.data as unknown as Record<string, never>,
-        order_index: orderIndex,
+        createdAt: now,
+        updatedAt: now,
+        // 새 스키마 컬럼도 함께 설정 (호환성)
+        guidebook_id: input.guidebook_id,
+        order_index: orderValue,
         is_visible: input.is_visible ?? true,
       })
       .select()
@@ -200,14 +290,14 @@ export const BlockService = {
       );
     }
 
-    return data as unknown as Block;
+    return mapDBRowToBlock(data as DBBlockRow);
   },
 
   /**
    * 블록 수정
    */
   async updateBlock(blockId: string, input: UpdateBlockInput): Promise<Block> {
-    const supabase = await createServerClient();
+    const supabase = createAdminClient();
 
     // 1. 기존 블록 조회
     const existingBlock = await this.getBlockById(blockId);
@@ -228,9 +318,13 @@ export const BlockService = {
       }
     }
 
-    // 3. 업데이트할 필드 구성
-    const updateData: Record<string, unknown> = {};
-    if (input.type !== undefined) updateData.type = input.type;
+    // 3. 업데이트할 필드 구성 (DB 스키마에 맞춤)
+    const updateData: Record<string, unknown> = {
+      updatedAt: new Date().toISOString(),
+    };
+    if (input.type !== undefined) {
+      updateData.type = BLOCK_TYPE_TO_DB[input.type] || input.type.toUpperCase();
+    }
     if (input.content !== undefined) updateData.content = input.content;
     if (input.is_visible !== undefined) updateData.is_visible = input.is_visible;
 
@@ -250,14 +344,14 @@ export const BlockService = {
       );
     }
 
-    return data as unknown as Block;
+    return mapDBRowToBlock(data as DBBlockRow);
   },
 
   /**
    * 블록 삭제
    */
   async deleteBlock(blockId: string): Promise<void> {
-    const supabase = await createServerClient();
+    const supabase = createAdminClient();
 
     // 1. 블록 존재 확인
     const existingBlock = await this.getBlockById(blockId);
@@ -294,12 +388,17 @@ export const BlockService = {
    * 블록 순서 변경 (일괄)
    */
   async reorderBlocks(guidebookId: string, orders: ReorderBlockInput[]): Promise<Block[]> {
-    const supabase = await createServerClient();
+    const supabase = createAdminClient();
+    const userId = await getAuthUserId();
+
+    if (!userId) {
+      throw new BlockServiceError('인증이 필요합니다', 'UNAUTHORIZED', 401);
+    }
 
     // 1. 가이드북 소유권 확인
     const { data: guidebook, error: guidebookError } = await supabase
       .from('guidebooks')
-      .select('id')
+      .select('id, user_id')
       .eq('id', guidebookId)
       .single();
 
@@ -311,13 +410,21 @@ export const BlockService = {
       );
     }
 
-    // 2. 각 블록의 order_index 업데이트
+    if (guidebook.user_id !== userId) {
+      throw new BlockServiceError(
+        '이 가이드북에 대한 권한이 없습니다',
+        'UNAUTHORIZED',
+        403
+      );
+    }
+
+    // 2. 각 블록의 order 업데이트 (DB는 'order' 컬럼 사용)
     const updatePromises = orders.map(({ id, order_index }) =>
       supabase
         .from('blocks')
-        .update({ order_index })
+        .update({ order: order_index, order_index, updatedAt: new Date().toISOString() })
         .eq('id', id)
-        .eq('guidebook_id', guidebookId)
+        .eq('guideId', guidebookId)
     );
 
     const results = await Promise.all(updatePromises);
@@ -340,16 +447,20 @@ export const BlockService = {
    * 가이드북 소유권 확인
    */
   async verifyGuidebookOwnership(guidebookId: string): Promise<boolean> {
-    const supabase = await createServerClient();
+    const supabase = createAdminClient();
+    const userId = await getAuthUserId();
+
+    if (!userId) {
+      return false;
+    }
 
     const { data, error } = await supabase
       .from('guidebooks')
-      .select('id')
+      .select('id, user_id')
       .eq('id', guidebookId)
       .single();
 
-    // RLS가 자동으로 소유권을 검증하므로, 데이터가 있으면 소유자임
-    return !error && !!data;
+    return !error && !!data && data.user_id === userId;
   },
 };
 

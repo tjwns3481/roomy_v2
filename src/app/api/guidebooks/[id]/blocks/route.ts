@@ -116,7 +116,7 @@ export async function POST(
     return NextResponse.json(
       {
         success: true,
-        data: block,
+        block,  // useEditor 훅이 'block' 키를 기대함
       },
       { status: 201 }
     );

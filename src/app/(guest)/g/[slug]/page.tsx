@@ -6,7 +6,7 @@
 
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
-import { createServerClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/server';
 import type { GuidebookWithBlocks, BlockType } from '@/types/guidebook';
 import { BottomNav } from '@/components/guest/BottomNav';
 import { ViewTracker } from '@/components/guest/ViewTracker';
@@ -25,7 +25,7 @@ interface PageProps {
  */
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const supabase = await createServerClient();
+  const supabase = createAdminClient();
 
   const { data: guidebook } = await supabase
     .from('guidebooks')
@@ -81,52 +81,65 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
  */
 export default async function GuestGuidePage({ params }: PageProps) {
   const { slug } = await params;
-  const supabase = await createServerClient();
+  const supabase = createAdminClient();
 
-  // 1. slug로 가이드북 조회 (블록 포함)
+  // 1. slug로 가이드북 조회
   const { data: guidebook, error } = await supabase
     .from('guidebooks')
-    .select(
-      `
-      *,
-      blocks (
-        id,
-        guidebook_id,
-        type,
-        order_index,
-        content,
-        is_visible,
-        created_at,
-        updated_at
-      )
-    `
-    )
+    .select('*')
     .eq('slug', slug)
     .eq('status', 'published')
-    .single<GuidebookWithBlocks>();
+    .single();
 
   // 2. 가이드북이 없거나 에러 발생 시 404
   if (error || !guidebook) {
     notFound();
   }
 
-  // 3. 블록 정렬 (order_index 기준)
-  const sortedBlocks = guidebook.blocks
-    ? [...guidebook.blocks]
-        .filter((block) => block.is_visible)
-        .sort((a, b) => a.order_index - b.order_index)
-    : [];
+  // 3. 블록 조회 (DB는 guideId, order 컬럼 사용 - 기존 Prisma 스키마)
+  const { data: blocksData } = await supabase
+    .from('blocks')
+    .select('*')
+    .eq('guideId', guidebook.id)
+    .order('order', { ascending: true });
 
-  // 4. 조회수 증가는 클라이언트 컴포넌트(ViewTracker)에서 처리
+  // 4. DB 타입(대문자)을 TypeScript 타입(소문자)으로 변환
+  const typeMapping: Record<string, string> = {
+    HERO: 'hero',
+    QUICK_INFO: 'quickInfo',
+    AMENITIES: 'amenities',
+    RULES: 'rules',
+    MAP: 'map',
+    GALLERY: 'gallery',
+    NOTICE: 'notice',
+    CUSTOM: 'custom',
+  };
+
+  // 5. 블록 정렬 및 변환
+  const sortedBlocks = (blocksData || [])
+    .filter((block: any) => block.is_visible !== false)
+    .map((block: any) => ({
+      id: block.id,
+      guidebook_id: block.guideId || block.guidebook_id,
+      type: typeMapping[block.type] || block.type.toLowerCase(),
+      order_index: block.order ?? block.order_index ?? 0,
+      content: block.content,
+      is_visible: block.is_visible ?? true,
+      created_at: block.createdAt || block.created_at,
+      updated_at: block.updatedAt || block.updated_at,
+    }))
+    .sort((a: any, b: any) => a.order_index - b.order_index);
+
+  // 6. 조회수 증가는 클라이언트 컴포넌트(ViewTracker)에서 처리
   // - 세션당 1회만 증가 (중복 방지)
   // - API 호출로 처리하여 더 정확한 통계 수집
 
-  // 5. 존재하는 블록 타입 추출 (BottomNav에 전달)
+  // 7. 존재하는 블록 타입 추출 (BottomNav에 전달)
   const availableBlockTypes: BlockType[] = sortedBlocks.map(
-    (block) => block.type
+    (block: any) => block.type as BlockType
   );
 
-  // 6. JSON-LD 데이터 준비
+  // 8. JSON-LD 데이터 준비
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://roomy.co.kr';
   const guidebookUrl = `${baseUrl}/g/${slug}`;
 

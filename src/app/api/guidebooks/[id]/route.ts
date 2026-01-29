@@ -44,25 +44,41 @@ export async function GET(request: NextRequest, context: RouteContext) {
       );
     }
 
-    // 블록 목록 조회 - guidebook_id 컬럼 사용
-    // Note: 데이터베이스 스키마에 따라 컬럼명이 다를 수 있음
+    // 블록 목록 조회 - DB는 guideId 컬럼 사용 (기존 Prisma 스키마)
     let blocks: any[] = [];
 
-    // 먼저 guidebook_id로 시도
     const { data: blocksData, error: blocksError } = await supabase
       .from('blocks')
       .select('*')
-      .eq('guidebook_id', id)
-      .order('order_index', { ascending: true });
+      .eq('guideId', id)
+      .order('order', { ascending: true });
 
     if (blocksError) {
-      // guidebook_id가 없으면 product_id 등 다른 컬럼 시도 (레거시 스키마 지원)
-      console.warn('블록 조회 시도 (guidebook_id):', blocksError.message);
-
-      // 블록이 없어도 에디터는 동작해야 함
+      console.warn('블록 조회 시도 (guideId):', blocksError.message);
       blocks = [];
     } else {
-      blocks = blocksData || [];
+      // DB 타입(대문자)을 TypeScript 타입(소문자)으로 변환
+      const typeMapping: Record<string, string> = {
+        HERO: 'hero',
+        QUICK_INFO: 'quickInfo',
+        AMENITIES: 'amenities',
+        RULES: 'rules',
+        MAP: 'map',
+        GALLERY: 'gallery',
+        NOTICE: 'notice',
+        CUSTOM: 'custom',
+      };
+
+      blocks = (blocksData || []).map((block: any) => ({
+        id: block.id,
+        guidebook_id: block.guideId || block.guidebook_id,
+        type: typeMapping[block.type] || block.type.toLowerCase(),
+        order_index: block.order ?? block.order_index ?? 0,
+        content: block.content,
+        is_visible: block.is_visible ?? true,
+        created_at: block.createdAt || block.created_at,
+        updated_at: block.updatedAt || block.updated_at,
+      }));
     }
 
     return NextResponse.json({
