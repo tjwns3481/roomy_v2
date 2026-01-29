@@ -5,6 +5,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@clerk/nextjs';
 import { CreateGuidebookModal } from '@/components/dashboard/CreateGuidebookModal';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -16,18 +17,34 @@ import type { Guidebook } from '@/types/guidebook';
 
 export default function DashboardPage() {
   const router = useRouter();
+  const { isLoaded, isSignedIn } = useAuth();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [guidebooks, setGuidebooks] = useState<Guidebook[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // 인증 체크 - 로그인하지 않은 경우 로그인 페이지로 리다이렉트
   useEffect(() => {
+    if (isLoaded && !isSignedIn) {
+      router.push('/login');
+    }
+  }, [isLoaded, isSignedIn, router]);
+
+  useEffect(() => {
+    // 인증되지 않은 상태면 API 호출 안 함
+    if (!isLoaded || !isSignedIn) return;
     loadGuidebooks();
-  }, []);
+  }, [isLoaded, isSignedIn]);
 
   const loadGuidebooks = async () => {
     try {
       const response = await fetch('/api/guidebooks');
       const data = await response.json();
+
+      // 401 에러: 로그인 페이지로 리다이렉트
+      if (response.status === 401) {
+        router.push('/login');
+        return;
+      }
 
       if (!response.ok) {
         throw new Error(data.error || '가이드북을 불러오는데 실패했습니다');
@@ -41,6 +58,20 @@ export default function DashboardPage() {
       setIsLoading(false);
     }
   };
+
+  // 인증 로딩 중이거나 로그인되지 않은 경우 로딩 표시
+  if (!isLoaded || !isSignedIn) {
+    return (
+      <div className="p-6 lg:p-8">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <div className="w-8 h-8 border-4 border-coral border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+            <p className="text-stone">로딩 중...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -167,7 +198,7 @@ export default function DashboardPage() {
               <div
                 key={guidebook.id}
                 className="flex items-center gap-4 p-4 rounded-lg border border-gray-200 hover:border-primary hover:shadow-sm transition-all cursor-pointer"
-                onClick={() => router.push(`/dashboard/editor/${guidebook.id}`)}
+                onClick={() => router.push(`/editor/${guidebook.id}`)}
               >
                 {/* 썸네일 */}
                 <div className="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
@@ -241,7 +272,7 @@ export default function DashboardPage() {
                     size="sm"
                     onClick={(e) => {
                       e.stopPropagation();
-                      router.push(`/dashboard/editor/${guidebook.id}`);
+                      router.push(`/editor/${guidebook.id}`);
                     }}
                   >
                     편집

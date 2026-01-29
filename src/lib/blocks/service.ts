@@ -105,7 +105,7 @@ export const BlockService = {
       );
     }
 
-    return (data || []) as Block[];
+    return (data || []) as unknown as Block[];
   },
 
   /**
@@ -131,7 +131,7 @@ export const BlockService = {
       );
     }
 
-    return data as Block;
+    return data as unknown as Block;
   },
 
   /**
@@ -185,7 +185,7 @@ export const BlockService = {
       .insert({
         guidebook_id: input.guidebook_id,
         type: input.type,
-        content: validation.data,
+        content: validation.data as unknown as Record<string, never>,
         order_index: orderIndex,
         is_visible: input.is_visible ?? true,
       })
@@ -200,7 +200,7 @@ export const BlockService = {
       );
     }
 
-    return data as Block;
+    return data as unknown as Block;
   },
 
   /**
@@ -250,7 +250,7 @@ export const BlockService = {
       );
     }
 
-    return data as Block;
+    return data as unknown as Block;
   },
 
   /**
@@ -277,7 +277,9 @@ export const BlockService = {
     }
 
     // 3. 남은 블록 순서 재정렬 (삭제된 블록 이후 블록들의 order_index 감소)
-    const { error: reorderError } = await supabase.rpc('reorder_blocks_after_delete', {
+    // RPC 함수가 타입에 정의되지 않으므로 타입 우회
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error: reorderError } = await (supabase.rpc as any)('reorder_blocks_after_delete', {
       p_guidebook_id: existingBlock.guidebook_id,
       p_deleted_order: existingBlock.order_index,
     });

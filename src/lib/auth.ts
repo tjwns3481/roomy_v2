@@ -36,7 +36,7 @@ export async function auth() {
         ? `${user.firstName} ${user.lastName || ''}`.trim()
         : user.emailAddresses[0]?.emailAddress?.split('@')[0] || 'User',
       image: user.imageUrl,
-      role: 'customer' as const, // 기본 역할, 필요시 Clerk 메타데이터에서 가져오기
+      role: 'customer' as 'customer' | 'admin', // 기본 역할, 필요시 Clerk 메타데이터에서 가져오기
     },
   };
 }

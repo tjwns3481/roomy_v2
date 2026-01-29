@@ -4,6 +4,7 @@
 
 import { Metadata } from 'next';
 import { WebsiteJsonLd, OrganizationJsonLd } from '@/components/seo';
+import { LandingHeader } from '@/components/landing/LandingHeader';
 import {
   HeroSection,
   FeaturesSection,
@@ -33,7 +34,10 @@ export default function Home() {
       <WebsiteJsonLd />
       <OrganizationJsonLd />
 
-      <div className="w-full">
+      <div className="flex flex-col min-h-screen">
+        {/* 헤더 */}
+        <LandingHeader />
+
         {/* 히어로 섹션 */}
         <HeroSection />
 

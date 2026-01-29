@@ -114,27 +114,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // RPC 함수 호출 시도
-    const { data: eventId, error: rpcError } = await supabase.rpc(
-      'track_share_event',
-      {
-        p_guidebook_id: guidebookId,
-        p_event_type: eventType,
-        p_event_data: eventData || {},
-        p_visitor_id: visitorId,
-        p_ip_hash: ipHash,
-        p_user_agent: userAgent,
-      }
-    );
-
-    if (rpcError) {
-      // RPC가 없는 경우 직접 삽입
+    // 직접 삽입 (RPC 함수가 없으므로)
+    {
       const { data: insertedEvent, error: insertError } = await supabase
         .from('share_events')
         .insert({
           guidebook_id: guidebookId,
           event_type: eventType,
-          event_data: eventData || {},
+          event_data: (eventData || {}) as unknown as Record<string, never>,
           visitor_id: visitorId,
           ip_hash: ipHash,
           user_agent: userAgent,
@@ -155,11 +142,6 @@ export async function POST(request: NextRequest) {
         data: { eventId: insertedEvent.id },
       });
     }
-
-    return NextResponse.json({
-      success: true,
-      data: { eventId },
-    });
   } catch (error) {
     console.error('공유 이벤트 API 에러:', error);
 

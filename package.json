@@ -22,6 +22,7 @@
     "analyze": "cross-env ANALYZE=true next build"
   },
   "dependencies": {
+    "@clerk/localizations": "^3.35.3",
     "@clerk/nextjs": "^6.36.10",
     "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-accordion": "^1.2.12",
@@ -48,7 +49,7 @@
     "framer-motion": "^11.18.2",
     "jspdf": "^4.0.0",
     "lucide-react": "^0.563.0",
-    "next": "16.1.4",
+    "next": "^15.5.11",
     "next-auth": "^5.0.0-beta.30",
     "next-themes": "^0.4.6",
     "openai": "^6.16.0",
@@ -81,7 +82,7 @@
     "@vitest/ui": "^4.0.18",
     "dotenv": "^17.2.3",
     "eslint": "^9",
-    "eslint-config-next": "16.1.4",
+    "eslint-config-next": "^15.5.11",
     "jsdom": "^27.4.0",
     "prompts": "^2.4.2",
     "tailwindcss": "^4",

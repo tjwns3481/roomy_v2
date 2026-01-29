@@ -1,144 +1,222 @@
-// @TASK P7-T7.3 - 랜딩 페이지 히어로 섹션
-// @SPEC docs/planning/06-tasks.md#P7-T7.3
+/**
+ * @TASK P7-T7.3 + UI-V2 - 랜딩 페이지 히어로 섹션
+ * 감성 중심 디자인 - 대담한 타이포그래피, 비대칭 레이아웃
+ */
 
 'use client';
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Sparkles, ArrowRight } from 'lucide-react';
+import { ArrowRight, Play } from 'lucide-react';
 
 export function HeroSection() {
   return (
-    <section className="relative w-full bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 border-b overflow-hidden">
-      {/* 배경 장식 */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob" />
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000" />
-        <div className="absolute top-1/2 left-1/2 w-80 h-80 bg-indigo-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000" />
+    <section className="relative min-h-screen flex items-center pt-20 overflow-hidden bg-white">
+      {/* 배경 - 미니멀한 도형 */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* 우상단 큰 원 */}
+        <div className="absolute -top-32 -right-32 w-[600px] h-[600px] bg-coral-light rounded-full opacity-60" />
+        {/* 좌하단 작은 원 */}
+        <div className="absolute -bottom-20 -left-20 w-[300px] h-[300px] bg-snow rounded-full" />
+        {/* 플로팅 도형들 */}
+        <motion.div
+          animate={{ y: [-10, 10, -10] }}
+          transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+          className="absolute top-1/4 right-1/4 w-16 h-16 border-2 border-coral/30 rounded-2xl rotate-12"
+        />
+        <motion.div
+          animate={{ y: [10, -10, 10] }}
+          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+          className="absolute bottom-1/3 left-1/4 w-8 h-8 bg-mint/20 rounded-full"
+        />
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
-        <div className="max-w-3xl">
-          {/* 배지 */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm border border-blue-200 rounded-full text-sm font-medium text-blue-700 mb-6 shadow-sm"
-          >
-            <Sparkles className="w-4 h-4" />
-            <span>AI 기반 자동 생성</span>
-          </motion.div>
-
-          {/* 메인 헤드라인 */}
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-gray-900 leading-tight"
-          >
-            에어비앤비 링크 하나로
-            <br />
-            <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-              게스트 가이드북을 자동 생성하세요
-            </span>
-          </motion.h1>
-
-          {/* 서브 헤드라인 */}
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="mt-6 text-lg sm:text-xl text-gray-700 leading-relaxed"
-          >
-            AI가 숙소 정보를 분석하여 모바일 친화적인 가이드북을 만들어드립니다.
-            <br />
-            더 이상 수동으로 정보를 입력할 필요가 없습니다.
-          </motion.p>
-
-          {/* CTA 버튼 */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="mt-8 flex flex-col sm:flex-row gap-4"
-          >
-            <Link
-              href="/signup"
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-all shadow-lg hover:shadow-xl hover:scale-105 group"
+      <div className="relative max-w-7xl mx-auto px-6 lg:px-8 py-16 lg:py-24">
+        <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+          {/* 왼쪽 텍스트 - 8 컬럼 */}
+          <div className="lg:col-span-7">
+            {/* 배지 */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-snow text-charcoal rounded-full text-sm font-medium mb-8"
             >
-              무료로 시작하기
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </Link>
-            <Link
-              href="/demo"
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-gray-900 border-2 border-gray-300 rounded-lg font-semibold hover:bg-gray-50 transition-all hover:scale-105"
-            >
-              데모 보기
-            </Link>
-          </motion.div>
+              <span className="w-2 h-2 bg-mint rounded-full animate-pulse" />
+              AI 기반 자동 생성
+            </motion.div>
 
-          {/* 소셜 프루프 */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="mt-8 flex items-center gap-6 text-sm text-gray-600"
-          >
-            <div className="flex items-center gap-2">
-              <div className="flex -space-x-2">
-                {[1, 2, 3, 4].map((i) => (
-                  <div
-                    key={i}
-                    className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 border-2 border-white"
-                  />
-                ))}
+            {/* 메인 헤드라인 - 왼쪽 정렬, 대담한 크기 */}
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="text-5xl sm:text-6xl lg:text-7xl font-bold text-ink tracking-tight leading-[1.05]"
+            >
+              에어비앤비 링크로
+              <br />
+              <span className="bg-gradient-to-r from-coral to-amber bg-clip-text text-transparent">
+                5분 만에 가이드북
+              </span>
+            </motion.h1>
+
+            {/* 서브 헤드라인 */}
+            <motion.p
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="mt-8 text-xl text-stone leading-relaxed max-w-lg"
+            >
+              AI가 숙소 정보를 분석하여 모바일 친화적인
+              디지털 가이드북을 자동으로 만들어드립니다.
+            </motion.p>
+
+            {/* CTA 버튼 */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="mt-10 flex flex-wrap items-center gap-4"
+            >
+              <Link
+                href="/signup"
+                className="group inline-flex items-center gap-2 px-8 py-4 bg-coral text-white rounded-full font-semibold
+                  shadow-coral hover:shadow-coral-lg hover:bg-coral-dark
+                  transition-all duration-300"
+              >
+                무료로 시작하기
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </Link>
+              <Link
+                href="/demo"
+                className="group inline-flex items-center gap-2 px-8 py-4 text-ink font-semibold
+                  hover:text-coral transition-colors duration-300"
+              >
+                <div className="w-10 h-10 rounded-full border-2 border-current flex items-center justify-center group-hover:bg-coral group-hover:border-coral group-hover:text-white transition-all duration-300">
+                  <Play className="w-4 h-4 ml-0.5" />
+                </div>
+                데모 보기
+              </Link>
+            </motion.div>
+
+            {/* 소셜 프루프 */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="mt-12 flex items-center gap-8"
+            >
+              <div className="flex items-center gap-3">
+                <div className="flex -space-x-3">
+                  {[
+                    'from-coral to-amber',
+                    'from-mint to-emerald-400',
+                    'from-amber to-orange-400',
+                    'from-violet-400 to-purple-400',
+                  ].map((gradient, i) => (
+                    <div
+                      key={i}
+                      className={`w-10 h-10 rounded-full bg-gradient-to-br ${gradient} border-3 border-white shadow-sm`}
+                    />
+                  ))}
+                </div>
+                <div className="text-sm">
+                  <p className="font-semibold text-ink">100+ 호스트</p>
+                  <p className="text-mist">가 사용 중</p>
+                </div>
               </div>
-              <span className="font-medium">100+ 호스트가 사용 중</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <span className="text-yellow-500">★★★★★</span>
-              <span className="font-medium">4.9/5.0</span>
-            </div>
-          </motion.div>
-        </div>
+              <div className="h-8 w-px bg-cloud" />
+              <div className="text-sm">
+                <div className="flex items-center gap-1 text-amber font-medium">
+                  {'★★★★★'.split('').map((star, i) => (
+                    <span key={i}>{star}</span>
+                  ))}
+                </div>
+                <p className="text-mist mt-0.5">평균 4.9점</p>
+              </div>
+            </motion.div>
+          </div>
 
-        {/* 우측 이미지 (모바일 목업) */}
-        <motion.div
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.7, delay: 0.3 }}
-          className="hidden lg:block absolute right-8 top-1/2 -translate-y-1/2 w-80"
-        >
-          <div className="relative">
-            {/* 모바일 프레임 */}
-            <div className="bg-gray-900 rounded-[3rem] p-4 shadow-2xl">
-              <div className="bg-white rounded-[2.5rem] overflow-hidden aspect-[9/19]">
-                {/* 스크린샷 플레이스홀더 */}
-                <div className="w-full h-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
-                  <div className="text-center p-6">
-                    <Sparkles className="w-12 h-12 text-blue-600 mx-auto mb-4" />
-                    <p className="text-sm font-semibold text-gray-700">
-                      게스트 가이드북
-                    </p>
-                    <p className="text-xs text-gray-500 mt-2">
-                      모바일 최적화 뷰어
-                    </p>
+          {/* 우측 비주얼 - 5 컬럼 */}
+          <motion.div
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="lg:col-span-5 relative"
+          >
+            {/* 모바일 목업 */}
+            <div className="relative mx-auto w-72 lg:w-80">
+              {/* 폰 프레임 */}
+              <div className="bg-ink rounded-[3rem] p-3 shadow-soft-lg">
+                <div className="bg-white rounded-[2.5rem] overflow-hidden aspect-[9/19]">
+                  {/* 앱 화면 */}
+                  <div className="w-full h-full bg-gradient-to-b from-coral-light to-white p-6 flex flex-col">
+                    {/* 헤더 */}
+                    <div className="flex items-center justify-between mb-6">
+                      <div className="w-10 h-10 bg-ink rounded-xl flex items-center justify-center">
+                        <span className="text-white font-bold text-sm">R</span>
+                      </div>
+                      <div className="flex gap-2">
+                        <div className="w-8 h-8 bg-snow rounded-lg" />
+                        <div className="w-8 h-8 bg-snow rounded-lg" />
+                      </div>
+                    </div>
+                    {/* 콘텐츠 스켈레톤 */}
+                    <div className="flex-1 space-y-4">
+                      <div className="w-3/4 h-4 bg-snow rounded-full" />
+                      <div className="w-1/2 h-4 bg-snow rounded-full" />
+                      <div className="mt-6 aspect-video bg-snow rounded-2xl" />
+                      <div className="space-y-2 mt-4">
+                        <div className="w-full h-3 bg-snow rounded-full" />
+                        <div className="w-5/6 h-3 bg-snow rounded-full" />
+                        <div className="w-4/6 h-3 bg-snow rounded-full" />
+                      </div>
+                    </div>
+                    {/* 하단 버튼 */}
+                    <div className="mt-auto pt-4">
+                      <div className="w-full h-12 bg-coral rounded-full flex items-center justify-center">
+                        <span className="text-white text-sm font-semibold">AI 챗봇</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
+
+              {/* 플로팅 카드 - 실시간 */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 0.6 }}
+                className="absolute -top-4 -right-4 bg-white rounded-2xl p-4 shadow-soft border border-cloud"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-3 h-3 bg-mint rounded-full animate-pulse" />
+                  <span className="text-sm font-medium text-ink">실시간 업데이트</span>
+                </div>
+              </motion.div>
+
+              {/* 플로팅 카드 - QR */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 0.8 }}
+                className="absolute -bottom-4 -left-4 bg-white rounded-2xl p-4 shadow-soft border border-cloud"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-snow rounded-lg flex items-center justify-center">
+                    <svg className="w-6 h-6 text-ink" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M3 3h6v6H3V3zm2 2v2h2V5H5zm8-2h6v6h-6V3zm2 2v2h2V5h-2zM3 13h6v6H3v-6zm2 2v2h2v-2H5zm13-2h1v1h-1v-1zm-4 0h1v1h-1v-1zm2 0h1v1h-1v-1zm0 2h1v1h-1v-1zm2 0h1v1h-1v-1zm-2 2h1v1h-1v-1zm2 0h1v1h-1v-1zm0 2h1v1h-1v-1z" />
+                    </svg>
+                  </div>
+                  <div className="text-sm">
+                    <p className="font-medium text-ink">QR 코드</p>
+                    <p className="text-mist text-xs">간편 공유</p>
+                  </div>
+                </div>
+              </motion.div>
             </div>
-            {/* 플로팅 배지 */}
-            <div className="absolute -top-4 -right-4 bg-white rounded-xl p-3 shadow-lg border border-gray-100">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
-                <span className="text-xs font-semibold text-gray-700">
-                  실시간 업데이트
-                </span>
-              </div>
-            </div>
-          </div>
-        </motion.div>
+          </motion.div>
+        </div>
       </div>
     </section>
   );

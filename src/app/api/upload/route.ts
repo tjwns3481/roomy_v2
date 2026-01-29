@@ -43,7 +43,7 @@ export async function POST(request: Request) {
     const buffer = Buffer.from(arrayBuffer);
 
     // 6. 이미지 리사이즈
-    let processedBuffer = buffer;
+    let processedBuffer: Uint8Array = new Uint8Array(buffer);
     let maxSize = 1920; // 기본값
 
     if (type === 'avatar') {

@@ -1,5 +1,7 @@
-// @TASK P7-T7.3 - 랜딩 페이지 플랜 비교 섹션
-// @SPEC docs/planning/06-tasks.md#P7-T7.3
+/**
+ * @TASK P7-T7.3 + UI-V2 - 랜딩 페이지 플랜 비교 섹션
+ * 감성 중심 디자인 - 미니멀 카드, 강조 포인트
+ */
 
 'use client';
 
@@ -10,8 +12,9 @@ import Link from 'next/link';
 const plans = [
   {
     name: 'Free',
-    price: 0,
     description: '개인 호스트에게 적합',
+    price: 0,
+    priceLabel: '무료',
     features: [
       '가이드북 1개',
       'AI 생성 3회/월',
@@ -21,11 +24,13 @@ const plans = [
     ],
     cta: '무료로 시작하기',
     href: '/signup',
+    popular: false,
   },
   {
     name: 'Pro',
-    price: 29000,
     description: '전문 호스트를 위한',
+    price: 29000,
+    priceLabel: '₩29K',
     features: [
       '가이드북 5개',
       'AI 생성 30회/월',
@@ -40,8 +45,9 @@ const plans = [
   },
   {
     name: 'Business',
-    price: 99000,
     description: '숙박 사업자를 위한',
+    price: 99000,
+    priceLabel: '₩99K',
     features: [
       '무제한 가이드북',
       '무제한 AI 생성',
@@ -53,111 +59,98 @@ const plans = [
     ],
     cta: '문의하기',
     href: '/contact',
+    popular: false,
   },
 ];
 
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-    },
-  },
-};
-
-const item = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0 },
-};
-
 export function PricingSection() {
   return (
-    <section className="w-full py-16 lg:py-24 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* 섹션 헤더 */}
+    <section id="pricing" className="py-24 lg:py-32 bg-white">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        {/* 섹션 헤더 - 왼쪽 정렬 */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-16"
+          transition={{ duration: 0.6 }}
+          className="max-w-2xl mb-16"
         >
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900">
+          <span className="text-sm font-semibold text-coral uppercase tracking-widest">
+            Pricing
+          </span>
+          <h2 className="mt-4 text-4xl sm:text-5xl font-bold text-ink tracking-tight">
             당신에게 맞는 플랜을
             <br />
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-coral to-amber bg-clip-text text-transparent">
               선택하세요
             </span>
           </h2>
-          <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
-            모든 플랜은 14일 무료 체험이 가능합니다
+          <p className="mt-6 text-lg text-stone">
+            모든 유료 플랜은 14일 무료 체험이 가능합니다.
+            신용카드 등록 없이 시작하세요.
           </p>
         </motion.div>
 
         {/* 플랜 카드 */}
-        <motion.div
-          variants={container}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto"
-        >
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
           {plans.map((plan, index) => (
             <motion.div
               key={index}
-              variants={item}
-              className={`relative bg-white border-2 rounded-2xl p-8 transition-all ${
-                plan.popular
-                  ? 'border-blue-500 shadow-xl scale-105'
-                  : 'border-gray-200 hover:border-gray-300 hover:shadow-lg'
-              }`}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: index * 0.1 }}
+              className={`relative bg-white rounded-3xl p-8 lg:p-10 transition-all duration-500
+                ${
+                  plan.popular
+                    ? 'border-2 border-ink shadow-soft-lg scale-105 z-10'
+                    : 'border border-cloud hover:border-coral/30 hover:shadow-soft'
+                }
+              `}
             >
               {/* 인기 배지 */}
               {plan.popular && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                  <div className="inline-flex items-center gap-2 px-4 py-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-sm font-semibold rounded-full shadow-lg">
+                <div className="absolute -top-4 left-8">
+                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-ink text-white text-sm font-semibold rounded-full">
                     <Sparkles className="w-4 h-4" />
                     인기
                   </div>
                 </div>
               )}
 
-              {/* 플랜 이름 */}
-              <div className="text-center mb-6">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                  {plan.name}
-                </h3>
-                <p className="text-sm text-gray-600">{plan.description}</p>
+              {/* 플랜 정보 */}
+              <div className="mb-8">
+                <h3 className="text-2xl font-bold text-ink">{plan.name}</h3>
+                <p className="mt-2 text-stone">{plan.description}</p>
               </div>
 
               {/* 가격 */}
-              <div className="text-center mb-8">
-                <div className="flex items-baseline justify-center gap-2">
-                  {plan.price === 0 ? (
-                    <span className="text-4xl font-bold text-gray-900">무료</span>
-                  ) : (
-                    <>
-                      <span className="text-4xl font-bold text-gray-900">
-                        ₩{(plan.price / 1000).toFixed(0)}K
-                      </span>
-                      <span className="text-gray-600">/월</span>
-                    </>
+              <div className="mb-8 pb-8 border-b border-cloud">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-5xl font-bold text-ink tracking-tight">
+                    {plan.priceLabel}
+                  </span>
+                  {plan.price > 0 && (
+                    <span className="text-stone">/월</span>
                   )}
                 </div>
                 {plan.price > 0 && (
-                  <p className="text-sm text-gray-500 mt-1">
-                    연간 결제 시 월 ₩{Math.round(plan.price / 12).toLocaleString()}
+                  <p className="mt-2 text-sm text-mist">
+                    연간 결제 시 2개월 무료
                   </p>
                 )}
               </div>
 
               {/* 기능 목록 */}
-              <ul className="space-y-4 mb-8">
+              <ul className="space-y-4 mb-10">
                 {plan.features.map((feature, featureIndex) => (
                   <li key={featureIndex} className="flex items-start gap-3">
-                    <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-sm text-gray-700">{feature}</span>
+                    <div className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center
+                      ${plan.popular ? 'bg-ink' : 'bg-mint-light'}`}
+                    >
+                      <Check className={`w-3 h-3 ${plan.popular ? 'text-white' : 'text-mint'}`} />
+                    </div>
+                    <span className="text-charcoal">{feature}</span>
                   </li>
                 ))}
               </ul>
@@ -165,30 +158,32 @@ export function PricingSection() {
               {/* CTA 버튼 */}
               <Link
                 href={plan.href}
-                className={`block w-full text-center px-6 py-3 rounded-lg font-semibold transition-all ${
-                  plan.popular
-                    ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg hover:shadow-xl'
-                    : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
-                }`}
+                className={`block w-full py-4 text-center font-semibold rounded-full transition-all duration-300
+                  ${
+                    plan.popular
+                      ? 'bg-coral text-white shadow-coral hover:shadow-coral-lg hover:bg-coral-dark'
+                      : 'bg-snow text-ink hover:bg-ink hover:text-white'
+                  }
+                `}
               >
                 {plan.cta}
               </Link>
             </motion.div>
           ))}
-        </motion.div>
+        </div>
 
         {/* 추가 정보 */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="mt-12 text-center"
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="mt-16 text-center"
         >
-          <p className="text-gray-600">
+          <p className="text-stone">
             더 많은 기능이 필요하신가요?{' '}
-            <Link href="/contact" className="text-blue-600 hover:text-blue-700 font-semibold">
-              맞춤형 플랜 문의하기
+            <Link href="/contact" className="text-coral font-semibold hover:text-coral-dark transition-colors">
+              맞춤형 플랜 문의하기 →
             </Link>
           </p>
         </motion.div>

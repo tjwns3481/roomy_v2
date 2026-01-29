@@ -58,6 +58,20 @@ export function CreateGuidebookModal({ open, onOpenChange }: CreateGuidebookModa
 
       const result = await response.json();
 
+      // 401 에러: 로그인 필요
+      if (response.status === 401) {
+        toast.error('로그인이 필요합니다. 다시 로그인해주세요.');
+        onOpenChange(false);
+        router.push('/login');
+        return;
+      }
+
+      // 402 에러: 플랜 제한
+      if (response.status === 402) {
+        toast.error(result.error || '가이드북 생성 한도를 초과했습니다.');
+        return;
+      }
+
       if (!response.ok) {
         throw new Error(result.error || '가이드북 생성에 실패했습니다');
       }
@@ -67,10 +81,10 @@ export function CreateGuidebookModal({ open, onOpenChange }: CreateGuidebookModa
       // 생성 방식에 따라 다른 페이지로 이동
       if (selectedMethod === 'ai') {
         // AI 생성 모달로 이동 (P3-T3.3)
-        router.push(`/dashboard/editor/${result.guidebook.id}?ai=true`);
+        router.push(`/editor/${result.guidebook.id}?ai=true`);
       } else {
         // 에디터로 바로 이동
-        router.push(`/dashboard/editor/${result.guidebook.id}`);
+        router.push(`/editor/${result.guidebook.id}`);
       }
 
       // 모달 닫기

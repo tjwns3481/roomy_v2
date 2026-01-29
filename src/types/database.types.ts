@@ -1152,37 +1152,6 @@ export interface Database {
         };
         Relationships: [];
       };
-      // @TASK P2-T2.7 - 가이드북 조회 통계 테이블
-      guidebook_views: {
-        Row: {
-          id: string;
-          guidebook_id: string;
-          visitor_id: string | null;
-          ip_hash: string | null;
-          user_agent: string | null;
-          referrer: string | null;
-          viewed_at: string;
-        };
-        Insert: {
-          id?: string;
-          guidebook_id: string;
-          visitor_id?: string | null;
-          ip_hash?: string | null;
-          user_agent?: string | null;
-          referrer?: string | null;
-          viewed_at?: string;
-        };
-        Update: {
-          id?: string;
-          guidebook_id?: string;
-          visitor_id?: string | null;
-          ip_hash?: string | null;
-          user_agent?: string | null;
-          referrer?: string | null;
-          viewed_at?: string;
-        };
-        Relationships: [];
-      };
       // cleanup용 테이블
       view_logs: {
         Row: {
@@ -1308,40 +1277,6 @@ export interface Database {
           order_id?: string | null;
           receipt_url?: string | null;
           paid_at?: string | null;
-          created_at?: string;
-        };
-        Relationships: [];
-      };
-      // @TASK P6-T6.1 - 플랜 제한 테이블
-      plan_limits: {
-        Row: {
-          plan: 'free' | 'pro' | 'business';
-          max_guidebooks: number;
-          max_ai_generations_per_month: number;
-          watermark_removed: boolean;
-          custom_domain: boolean;
-          priority_support: boolean;
-          price_yearly: number;
-          created_at: string;
-        };
-        Insert: {
-          plan: 'free' | 'pro' | 'business';
-          max_guidebooks: number;
-          max_ai_generations_per_month: number;
-          watermark_removed?: boolean;
-          custom_domain?: boolean;
-          priority_support?: boolean;
-          price_yearly: number;
-          created_at?: string;
-        };
-        Update: {
-          plan?: 'free' | 'pro' | 'business';
-          max_guidebooks?: number;
-          max_ai_generations_per_month?: number;
-          watermark_removed?: boolean;
-          custom_domain?: boolean;
-          priority_support?: boolean;
-          price_yearly?: number;
           created_at?: string;
         };
         Relationships: [];

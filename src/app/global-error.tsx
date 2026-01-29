@@ -1,7 +1,10 @@
+/* eslint-disable @next/next/no-sync-scripts */
+/* eslint-disable @next/next/no-html-link-for-pages */
 'use client';
 
 // @TASK P7-T7.5 - Global Error 페이지 (루트 레이아웃 에러 처리)
 // @SPEC docs/planning/06-tasks.md#P7-T7.5
+// Note: global-error는 루트 레이아웃 외부이므로 Link/Script 컴포넌트 사용 불가
 
 import { useEffect } from 'react';
 

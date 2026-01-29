@@ -43,22 +43,13 @@ export async function PATCH(request: Request) {
     // 3. Supabase에 upsert
     const supabase = await createServerClient();
 
-    const updateData: Record<string, any> = {
+    const updateData = {
       user_id: session.user.id,
       updated_at: new Date().toISOString(),
+      daily_stats: dailyStats,
+      new_features: newFeatures,
+      marketing: marketing,
     };
-
-    if (dailyStats !== undefined) {
-      updateData.dailyStats = dailyStats;
-    }
-
-    if (newFeatures !== undefined) {
-      updateData.newFeatures = newFeatures;
-    }
-
-    if (marketing !== undefined) {
-      updateData.marketing = marketing;
-    }
 
     const { error } = await supabase
       .from('notification_preferences')

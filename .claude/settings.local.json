@@ -7,13 +7,17 @@
       "Bash(git rev-parse:*)",
       "Bash(git init:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(claude --version)",
+      "Bash(lsof:*)",
+      "Bash(curl:*)",
+      "Bash(npm install:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
+    "gemini",
     "context7",
-    "playwright",
-    "gemini"
+    "playwright"
   ]
 }
