@@ -57,7 +57,7 @@ export interface QuickInfoContent {
     password: string;
     instructions?: string;
   };
-  address: string;
+  address?: string; // 선택 필드로 변경 (블록 생성 시 빈 값 허용)
   coordinates?: {
     lat: number;
     lng: number;
@@ -65,21 +65,21 @@ export interface QuickInfoContent {
 }
 
 export const quickInfoContentSchema = z.object({
-  checkIn: z.string().regex(/^\d{2}:\d{2}$/, '시간 형식: HH:mm'),
-  checkOut: z.string().regex(/^\d{2}:\d{2}$/, '시간 형식: HH:mm'),
+  checkIn: z.string().default('15:00'), // 기본값 제공
+  checkOut: z.string().default('11:00'), // 기본값 제공
   wifi: z
     .object({
-      ssid: z.string().min(1, 'SSID를 입력하세요'),
-      password: z.string().min(1, '비밀번호를 입력하세요'),
+      ssid: z.string().default(''), // 부분 입력 허용
+      password: z.string().default(''), // 부분 입력 허용
     })
     .optional(),
   doorLock: z
     .object({
-      password: z.string().min(1, '비밀번호를 입력하세요'),
+      password: z.string().default(''), // 부분 입력 허용
       instructions: z.string().optional(),
     })
     .optional(),
-  address: z.string().min(1, '주소를 입력하세요'),
+  address: z.string().optional(), // 선택 필드로 변경
   coordinates: z
     .object({
       lat: z.number().min(-90).max(90),
@@ -224,8 +224,8 @@ export interface NoticeContent {
 }
 
 export const noticeContentSchema = z.object({
-  title: z.string().min(1, '공지 제목을 입력하세요'),
-  content: z.string().min(1, '공지 내용을 입력하세요'),
+  title: z.string().default(''), // 블록 생성 시 빈 값 허용
+  content: z.string().default(''), // 블록 생성 시 빈 값 허용
   type: z.enum(['info', 'warning', 'danger']),
   dismissible: z.boolean().optional(),
 });
@@ -240,7 +240,7 @@ export interface CustomContent {
 
 export const customContentSchema = z.object({
   title: z.string().optional(),
-  content: z.string().min(1, '내용을 입력하세요'),
+  content: z.string().default(''), // 블록 생성 시 빈 값 허용
 });
 
 // ========================================

@@ -10,7 +10,7 @@ import { z } from 'zod';
 // DB Column Mapping (DB uses different column names)
 // ============================================================================
 
-// DB 스키마의 블록 타입은 대문자를 사용합니다
+// DB는 Prisma에서 생성한 BlockType enum 사용 (대문자)
 const BLOCK_TYPE_TO_DB: Record<BlockType, string> = {
   hero: 'HERO',
   quickInfo: 'QUICK_INFO',
@@ -259,7 +259,7 @@ export const BlockService = {
       orderValue = maxOrderData ? (maxOrderData.order as number) + 1 : 0;
     }
 
-    // 4. 블록 생성 (DB 스키마에 맞춰 guideId, order, type 대문자 사용)
+    // 4. 블록 생성 (DB는 대문자 BlockType enum 사용)
     const blockId = generateCuid();
     const now = new Date().toISOString();
     const dbType = BLOCK_TYPE_TO_DB[input.type] || input.type.toUpperCase();
@@ -318,7 +318,7 @@ export const BlockService = {
       }
     }
 
-    // 3. 업데이트할 필드 구성 (DB 스키마에 맞춤)
+    // 3. 업데이트할 필드 구성 (DB는 대문자 BlockType enum)
     const updateData: Record<string, unknown> = {
       updatedAt: new Date().toISOString(),
     };
