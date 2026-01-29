@@ -8,6 +8,9 @@ import type { BlockType } from '@/types/guidebook';
 import { BottomNav } from '@/components/guest/BottomNav';
 import { ViewTracker } from '@/components/guest/ViewTracker';
 import { BlockList } from '@/components/guest/BlockRenderer';
+import { UpsellWidget } from '@/components/guest/UpsellWidget';
+import { ChatWidget } from '@/components/guest/ChatWidget';
+import { ReviewRequestPopup } from '@/components/guest/ReviewRequestPopup';
 import { GuidebookJsonLd, BreadcrumbJsonLd } from '@/components/seo';
 
 export const revalidate = 3600; // 1시간
@@ -134,7 +137,15 @@ export default async function GuestGuidePage({ params }: PageProps) {
     (block: any) => block.type as BlockType
   );
 
-  // 7. JSON-LD 데이터 준비
+  // 7. 리뷰 설정 조회
+  const { data: reviewSettings } = await supabase
+    .from('review_settings')
+    .select('*')
+    .eq('guidebook_id', guidebook.id)
+    .eq('is_enabled', true)
+    .single();
+
+  // 8. JSON-LD 데이터 준비
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://roomy.co.kr';
   const guidebookUrl = `${baseUrl}/g/${slug}`;
 
@@ -182,6 +193,9 @@ export default async function GuestGuidePage({ params }: PageProps) {
         <main className="max-w-4xl mx-auto">
           <BlockList blocks={sortedBlocks} />
 
+          {/* Upsell Widget (Business 플랜) */}
+          <UpsellWidget guidebookId={guidebook.id} />
+
           {/* Contact Section */}
           <section id="contact" className="mt-8 scroll-mt-20 px-4 pb-8">
             <div className="bg-white border border-border rounded-xl p-6 shadow-airbnb-sm">
@@ -207,6 +221,21 @@ export default async function GuestGuidePage({ params }: PageProps) {
 
         {/* Bottom Navigation */}
         <BottomNav availableBlocks={availableBlockTypes} />
+
+        {/* AI Chatbot Widget (P8-S2-T2) */}
+        <ChatWidget
+          guidebookId={guidebook.id}
+          guidebookTitle={guidebook.title}
+          themeColor={guidebook.theme_color || '#FF385C'}
+        />
+
+        {/* Review Request Popup (P8-S12-T1) */}
+        {reviewSettings && (
+          <ReviewRequestPopup
+            guidebookId={guidebook.id}
+            settings={reviewSettings}
+          />
+        )}
       </div>
     </>
   );
