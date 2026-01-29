@@ -7,9 +7,10 @@
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { createAdminClient } from '@/lib/supabase/server';
-import type { GuidebookWithBlocks, BlockType } from '@/types/guidebook';
+import type { BlockType } from '@/types/guidebook';
 import { BottomNav } from '@/components/guest/BottomNav';
 import { ViewTracker } from '@/components/guest/ViewTracker';
+import { BlockList } from '@/components/guest/BlockRenderer';
 import { GuidebookJsonLd, BreadcrumbJsonLd } from '@/components/seo';
 
 // @TASK P7-T7.8 - API 캐싱 설정 (1시간 캐싱)
@@ -165,66 +166,45 @@ export default async function GuestGuidePage({ params }: PageProps) {
         {/* 조회수 추적 */}
         <ViewTracker guidebookId={guidebook.id} />
 
-      {/* Top Anchor */}
-      <div id="top" className="absolute top-0 left-0 w-full h-1" />
+        {/* Top Anchor */}
+        <div id="top" className="absolute top-0 left-0 w-full h-1" />
 
-      {/* Header */}
-      <header id="header" className="border-b">
-        <div className="max-w-4xl mx-auto px-4 py-4">
-          <h1 className="text-2xl font-bold text-gray-900">{guidebook.title}</h1>
-          {guidebook.description && (
-            <p className="text-gray-600 mt-1">{guidebook.description}</p>
-          )}
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 py-8">
-        {sortedBlocks.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-gray-500">아직 작성된 내용이 없습니다.</p>
-          </div>
-        ) : (
-          <div className="space-y-6">
-            {sortedBlocks.map((block) => (
-              <section
-                key={block.id}
-                id={`block-${block.type}`}
-                className="p-6 border rounded-lg bg-white shadow-sm scroll-mt-20"
-              >
-                <div className="mb-2">
-                  <span className="text-xs text-gray-500 uppercase">
-                    {block.type}
-                  </span>
-                </div>
-                <pre className="text-sm text-gray-700 whitespace-pre-wrap">
-                  {JSON.stringify(block.content, null, 2)}
-                </pre>
-              </section>
-            ))}
-          </div>
+        {/* Hero 블록이 없을 때만 헤더 표시 */}
+        {!sortedBlocks.some((b: any) => b.type === 'hero') && (
+          <header id="header" className="border-b">
+            <div className="max-w-4xl mx-auto px-4 py-4">
+              <h1 className="text-2xl font-bold text-gray-900">{guidebook.title}</h1>
+              {guidebook.description && (
+                <p className="text-gray-600 mt-1">{guidebook.description}</p>
+              )}
+            </div>
+          </header>
         )}
 
-        {/* Contact Section (문의 섹션) */}
-        <section id="contact" className="mt-8 scroll-mt-20">
-          <div className="p-6 border rounded-lg bg-gray-50">
-            <h2 className="text-lg font-semibold mb-2">문의하기</h2>
-            <p className="text-gray-600 text-sm">
-              궁금한 점이 있으시면 호스트에게 문의하세요.
-            </p>
+        {/* Main Content - 블록 렌더러 사용 */}
+        <main className="max-w-4xl mx-auto">
+          <BlockList blocks={sortedBlocks} />
+
+          {/* Contact Section (문의 섹션) */}
+          <section id="contact" className="mt-8 scroll-mt-20 px-4 pb-8">
+            <div className="p-6 border rounded-lg bg-gray-50">
+              <h2 className="text-lg font-semibold mb-2">문의하기</h2>
+              <p className="text-gray-600 text-sm">
+                궁금한 점이 있으시면 호스트에게 문의하세요.
+              </p>
+            </div>
+          </section>
+        </main>
+
+        {/* Footer */}
+        <footer className="border-t mt-12 py-6">
+          <div className="max-w-4xl mx-auto px-4 text-center text-sm text-gray-500">
+            Powered by <span className="font-semibold">Roomy</span>
           </div>
-        </section>
-      </main>
+        </footer>
 
-      {/* Footer */}
-      <footer className="border-t mt-12 py-6">
-        <div className="max-w-4xl mx-auto px-4 text-center text-sm text-gray-500">
-          Powered by <span className="font-semibold">Roomy</span>
-        </div>
-      </footer>
-
-      {/* Bottom Navigation */}
-      <BottomNav availableBlocks={availableBlockTypes} />
+        {/* Bottom Navigation */}
+        <BottomNav availableBlocks={availableBlockTypes} />
       </div>
     </>
   );
