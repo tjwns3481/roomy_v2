@@ -1,10 +1,11 @@
 // @TASK P8-S8-T1 - 통계 페이지 클라이언트 컴포넌트
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card } from '@/components/ui/card';
 import { AnalyticsChart } from '@/components/dashboard/AnalyticsChart';
+import { ReferrerChart } from '@/components/dashboard/ReferrerChart';
 import { Eye, TrendingUp, BookOpen, Sparkles } from 'lucide-react';
 
 interface DailyViewStat {
@@ -34,16 +35,44 @@ interface AnalyticsData {
   guidebookStats: GuidebookStat[];
 }
 
+interface ReferrerData {
+  name: string;
+  value: number;
+}
+
 interface Props {
   initialData: AnalyticsData;
 }
 
 export function AnalyticsClient({ initialData }: Props) {
   const [period, setPeriod] = useState<'daily' | 'weekly' | 'monthly'>('daily');
+  const [referrerData, setReferrerData] = useState<ReferrerData[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const formatNumber = (num: number) => {
     return new Intl.NumberFormat('ko-KR').format(num);
   };
+
+  // 유입 경로 데이터 로드
+  useEffect(() => {
+    async function fetchReferrerData() {
+      setLoading(true);
+      try {
+        const response = await fetch('/api/analytics?type=referrer&period=30d');
+        if (response.ok) {
+          const result = await response.json();
+          if (result.data?.referrer) {
+            setReferrerData(result.data.referrer);
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch referrer data:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchReferrerData();
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -131,6 +160,28 @@ export function AnalyticsClient({ initialData }: Props) {
 
         <AnalyticsChart data={initialData.chartData} period={period} />
       </Card>
+
+      {/* 유입 경로 분석 */}
+      {referrerData.length > 0 && (
+        <Card className="p-6 bg-surface border border-border">
+          <div className="mb-6">
+            <h2 className="text-h2 font-semibold text-text-primary mb-2">
+              유입 경로 분석
+            </h2>
+            <p className="text-caption text-text-secondary">
+              QR, 링크, 직접 접속 비율
+            </p>
+          </div>
+
+          {loading ? (
+            <div className="h-[300px] flex items-center justify-center">
+              <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
+            </div>
+          ) : (
+            <ReferrerChart data={referrerData} />
+          )}
+        </Card>
+      )}
 
       {/* 가이드북별 통계 */}
       <Card className="p-6 bg-surface border border-border">

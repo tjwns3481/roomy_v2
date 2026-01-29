@@ -1,221 +1,204 @@
-// @TASK TouchStay-Comparison - 리뷰 요청 팝업 (Touch Stay 핵심 기능: 5-Star Review Pop-Up)
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Star, X, ExternalLink, ThumbsUp, MessageSquare } from 'lucide-react';
+// @TASK P8-S12-T1 - 리뷰 요청 팝업 컴포넌트
+// @SPEC P8 Screen 12 - Review Settings
+
+import { useEffect, useState } from 'react';
+import { X, Star } from 'lucide-react';
+import { ReviewSettings, ReviewPlatform } from '@/types/review';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 
 interface ReviewRequestPopupProps {
-  guidebookTitle: string;
-  airbnbUrl?: string;
-  googleMapsUrl?: string;
-  showAfterSeconds?: number; // When to show the popup
-  themeColor?: string;
+  guidebookId: string;
+  settings: ReviewSettings;
 }
 
 export function ReviewRequestPopup({
-  guidebookTitle,
-  airbnbUrl,
-  googleMapsUrl,
-  showAfterSeconds = 120, // Default: show after 2 minutes
-  themeColor = '#3B82F6',
+  guidebookId,
+  settings,
 }: ReviewRequestPopupProps) {
   const [isVisible, setIsVisible] = useState(false);
-  const [selectedRating, setSelectedRating] = useState<number | null>(null);
-  const [hoveredRating, setHoveredRating] = useState<number | null>(null);
-  const [step, setStep] = useState<'rating' | 'positive' | 'negative'>('rating');
-  const [feedback, setFeedback] = useState('');
-  const [submitted, setSubmitted] = useState(false);
+  const [hasShown, setHasShown] = useState(false);
 
   useEffect(() => {
-    // Check if already shown in this session
-    const hasShown = sessionStorage.getItem(`review-popup-${guidebookTitle}`);
-    if (hasShown) return;
+    // 이미 표시했으면 다시 표시하지 않음
+    const storageKey = `review-popup-shown-${guidebookId}`;
+    const shown = localStorage.getItem(storageKey);
 
-    const timer = setTimeout(() => {
-      setIsVisible(true);
-      sessionStorage.setItem(`review-popup-${guidebookTitle}`, 'true');
-    }, showAfterSeconds * 1000);
-
-    return () => clearTimeout(timer);
-  }, [guidebookTitle, showAfterSeconds]);
-
-  const handleRatingSelect = (rating: number) => {
-    setSelectedRating(rating);
-    // Route based on rating (Touch Stay pattern)
-    if (rating >= 4) {
-      setStep('positive');
-    } else {
-      setStep('negative');
+    if (shown) {
+      setHasShown(true);
+      return;
     }
-  };
 
-  const handleFeedbackSubmit = async () => {
-    // Send feedback to API
+    // 설정이 활성화되어 있고, 리뷰 링크가 하나라도 있으면 표시
+    if (
+      settings.is_enabled &&
+      (settings.airbnb_review_url ||
+        settings.naver_place_url ||
+        settings.google_maps_url)
+    ) {
+      // 3초 후 팝업 표시
+      const timer = setTimeout(() => {
+        setIsVisible(true);
+        trackPopupShown();
+        localStorage.setItem(storageKey, 'true');
+        setHasShown(true);
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [guidebookId, settings]);
+
+  const trackPopupShown = async () => {
     try {
-      await fetch('/api/feedback', {
+      await fetch(`/api/review-settings/${guidebookId}/track`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({
-          guidebookTitle,
-          rating: selectedRating,
-          feedback,
+          action: 'shown',
         }),
       });
     } catch (error) {
-      console.error('Failed to submit feedback:', error);
+      console.error('Error tracking popup shown:', error);
     }
-    setSubmitted(true);
   };
 
-  if (!isVisible || submitted) return null;
+  const handleReviewClick = async (platform: ReviewPlatform, url: string) => {
+    try {
+      await fetch(`/api/review-settings/${guidebookId}/track`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          platform,
+          action: 'clicked',
+        }),
+      });
+
+      // 새 탭에서 리뷰 페이지 열기
+      window.open(url, '_blank', 'noopener,noreferrer');
+    } catch (error) {
+      console.error('Error tracking review click:', error);
+      // 에러가 나도 리뷰 페이지는 열어줌
+      window.open(url, '_blank', 'noopener,noreferrer');
+    }
+
+    setIsVisible(false);
+  };
+
+  const handleClose = () => {
+    setIsVisible(false);
+  };
+
+  if (!isVisible || hasShown) {
+    return null;
+  }
+
+  const platforms = [
+    {
+      name: 'Airbnb',
+      platform: 'airbnb' as ReviewPlatform,
+      url: settings.airbnb_review_url,
+      icon: '🏠',
+      color: 'bg-[#FF385C]',
+    },
+    {
+      name: 'Naver',
+      platform: 'naver' as ReviewPlatform,
+      url: settings.naver_place_url,
+      icon: 'N',
+      color: 'bg-[#03C75A]',
+    },
+    {
+      name: 'Google',
+      platform: 'google' as ReviewPlatform,
+      url: settings.google_maps_url,
+      icon: 'G',
+      color: 'bg-[#4285F4]',
+    },
+  ].filter((p) => p.url); // URL이 있는 플랫폼만
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <Card className="w-full max-w-md animate-in fade-in zoom-in duration-300">
-        <CardContent className="p-6">
-          {/* Close Button */}
-          <button
-            onClick={() => setIsVisible(false)}
-            className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
-          >
-            <X className="w-5 h-5" />
-          </button>
+    <>
+      {/* Backdrop */}
+      <div
+        className="fixed inset-0 bg-black/50 z-50 animate-in fade-in duration-200"
+        onClick={handleClose}
+      />
 
-          {step === 'rating' && (
-            <div className="text-center">
-              <div
-                className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
-                style={{ backgroundColor: `${themeColor}20` }}
-              >
-                <ThumbsUp className="w-8 h-8" style={{ color: themeColor }} />
+      {/* Modal */}
+      <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 pointer-events-none">
+        <div
+          className="bg-background rounded-2xl shadow-xl max-w-md w-full pointer-events-auto animate-in slide-in-from-bottom-8 sm:slide-in-from-bottom-0 duration-300"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Header */}
+          <div className="relative p-6 pb-4">
+            <button
+              onClick={handleClose}
+              className="absolute top-4 right-4 p-2 rounded-full hover:bg-surface transition-colors"
+              aria-label="닫기"
+            >
+              <X className="w-5 h-5 text-text-secondary" />
+            </button>
+
+            <div className="flex items-center gap-3 mb-2">
+              <div className="p-3 bg-primary-light rounded-full">
+                <Star className="w-6 h-6 text-primary" />
               </div>
-              <h2 className="text-xl font-bold text-gray-900 mb-2">
-                숙소는 만족스러우셨나요?
+              <h2 className="text-h3 text-text-primary">
+                {settings.popup_title}
               </h2>
-              <p className="text-gray-600 mb-6">
-                소중한 의견을 들려주세요
-              </p>
+            </div>
+            <p className="text-body text-text-secondary ml-[52px]">
+              {settings.popup_message}
+            </p>
+          </div>
 
-              {/* Star Rating */}
-              <div className="flex justify-center gap-2 mb-6">
-                {[1, 2, 3, 4, 5].map((rating) => (
-                  <button
-                    key={rating}
-                    onClick={() => handleRatingSelect(rating)}
-                    onMouseEnter={() => setHoveredRating(rating)}
-                    onMouseLeave={() => setHoveredRating(null)}
-                    className="p-1 transition-transform hover:scale-110"
-                  >
-                    <Star
-                      className={`w-10 h-10 transition-colors ${
-                        (hoveredRating !== null ? rating <= hoveredRating : false)
-                          ? 'fill-yellow-400 text-yellow-400'
-                          : 'text-gray-300'
-                      }`}
-                    />
-                  </button>
-                ))}
-              </div>
-
+          {/* Platforms */}
+          <div className="px-6 pb-4 space-y-3">
+            {platforms.map((platform) => (
               <button
-                onClick={() => setIsVisible(false)}
-                className="text-sm text-gray-500 hover:text-gray-700"
+                key={platform.platform}
+                onClick={() =>
+                  handleReviewClick(platform.platform, platform.url!)
+                }
+                className={`
+                  w-full flex items-center gap-3 p-4 rounded-xl
+                  border-2 border-border hover:border-primary
+                  transition-all hover:shadow-md
+                `}
               >
-                나중에 할게요
+                <div
+                  className={`
+                  w-10 h-10 rounded-full ${platform.color}
+                  flex items-center justify-center text-white font-bold
+                `}
+                >
+                  {platform.icon}
+                </div>
+                <span className="text-body font-semibold text-text-primary">
+                  {platform.name}에서 리뷰 남기기
+                </span>
               </button>
-            </div>
-          )}
+            ))}
+          </div>
 
-          {step === 'positive' && (
-            <div className="text-center">
-              <div className="text-4xl mb-4">🎉</div>
-              <h2 className="text-xl font-bold text-gray-900 mb-2">
-                감사합니다!
-              </h2>
-              <p className="text-gray-600 mb-6">
-                좋은 경험을 하셨다니 기쁩니다.
-                <br />
-                리뷰를 남겨주시면 큰 도움이 됩니다!
-              </p>
-
-              <div className="space-y-3">
-                {airbnbUrl && (
-                  <Button
-                    className="w-full"
-                    style={{ backgroundColor: '#FF5A5F' }}
-                    onClick={() => window.open(airbnbUrl, '_blank')}
-                  >
-                    <ExternalLink className="w-4 h-4 mr-2" />
-                    에어비앤비에서 리뷰 남기기
-                  </Button>
-                )}
-                {googleMapsUrl && (
-                  <Button
-                    className="w-full"
-                    onClick={() => window.open(googleMapsUrl, '_blank')}
-                  >
-                    <ExternalLink className="w-4 h-4 mr-2" />
-                    Google에서 리뷰 남기기
-                  </Button>
-                )}
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  onClick={() => setIsVisible(false)}
-                >
-                  다음에 할게요
-                </Button>
-              </div>
-            </div>
-          )}
-
-          {step === 'negative' && (
-            <div className="text-center">
-              <div
-                className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
-                style={{ backgroundColor: `${themeColor}20` }}
-              >
-                <MessageSquare className="w-8 h-8" style={{ color: themeColor }} />
-              </div>
-              <h2 className="text-xl font-bold text-gray-900 mb-2">
-                소중한 의견을 들려주세요
-              </h2>
-              <p className="text-gray-600 mb-6">
-                어떤 점이 불편하셨나요?
-                <br />
-                호스트가 직접 확인하고 개선하겠습니다.
-              </p>
-
-              <textarea
-                value={feedback}
-                onChange={(e) => setFeedback(e.target.value)}
-                placeholder="불편했던 점이나 개선 사항을 알려주세요..."
-                className="w-full p-3 border rounded-lg mb-4 h-32 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-
-              <div className="flex gap-3">
-                <Button
-                  variant="outline"
-                  className="flex-1"
-                  onClick={() => setIsVisible(false)}
-                >
-                  취소
-                </Button>
-                <Button
-                  className="flex-1"
-                  style={{ backgroundColor: themeColor }}
-                  onClick={handleFeedbackSubmit}
-                  disabled={!feedback.trim()}
-                >
-                  전송하기
-                </Button>
-              </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+          {/* Footer */}
+          <div className="px-6 pb-6">
+            <Button
+              variant="ghost"
+              onClick={handleClose}
+              className="w-full"
+            >
+              나중에 할게요
+            </Button>
+          </div>
+        </div>
+      </div>
+    </>
   );
 }
