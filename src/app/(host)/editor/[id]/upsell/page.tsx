@@ -5,6 +5,7 @@
 import { createServerClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { UpsellSettingsClient } from '@/components/editor/UpsellSettingsClient';
+import { EditorNav } from '@/components/editor/EditorNav';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Crown } from 'lucide-react';
@@ -52,32 +53,35 @@ export default async function UpsellSettingsPage({
   // Business 플랜이 아니면 업그레이드 안내
   if (!canCreate) {
     return (
-      <div className="container max-w-4xl py-8">
-        <Alert className="border-amber-200 bg-amber-50">
-          <Crown className="h-5 w-5 text-amber-600" />
-          <AlertTitle className="text-h4 text-amber-900">
-            Business 플랜 업그레이드 필요
-          </AlertTitle>
-          <AlertDescription className="mt-2 space-y-4">
-            <p className="text-body text-amber-800">
-              Upsell 기능은 Business 플랜에서만 사용할 수 있습니다.
-              게스트에게 추가 서비스를 판매하고 수익을 늘려보세요.
-            </p>
-            <div className="flex gap-2">
-              <Button asChild variant="default">
-                <Link href="/settings/subscription">
-                  플랜 업그레이드
-                </Link>
-              </Button>
-              <Button asChild variant="outline">
-                <Link href={`/editor/${guidebookId}`}>
-                  에디터로 돌아가기
-                </Link>
-              </Button>
-            </div>
-          </AlertDescription>
-        </Alert>
-      </div>
+      <>
+        <EditorNav guidebookId={guidebookId} />
+        <div className="container max-w-4xl py-8">
+          <Alert className="border-amber-200 bg-amber-50">
+            <Crown className="h-5 w-5 text-amber-600" />
+            <AlertTitle className="text-h4 text-amber-900">
+              Business 플랜 업그레이드 필요
+            </AlertTitle>
+            <AlertDescription className="mt-2 space-y-4">
+              <p className="text-body text-amber-800">
+                Upsell 기능은 Business 플랜에서만 사용할 수 있습니다.
+                게스트에게 추가 서비스를 판매하고 수익을 늘려보세요.
+              </p>
+              <div className="flex gap-2">
+                <Button asChild variant="default">
+                  <Link href="/settings/subscription">
+                    플랜 업그레이드
+                  </Link>
+                </Button>
+                <Button asChild variant="outline">
+                  <Link href={`/editor/${guidebookId}`}>
+                    에디터로 돌아가기
+                  </Link>
+                </Button>
+              </div>
+            </AlertDescription>
+          </Alert>
+        </div>
+      </>
     );
   }
 
@@ -109,18 +113,21 @@ export default async function UpsellSettingsPage({
     .single();
 
   return (
-    <UpsellSettingsClient
-      guidebookId={guidebookId}
-      guidebookTitle={guidebook.title}
-      initialItems={items || []}
-      initialRequests={requests || []}
-      initialStats={
-        stats || {
-          pending_requests: 0,
-          confirmed_requests: 0,
-          cancelled_requests: 0,
+    <>
+      <EditorNav guidebookId={guidebookId} />
+      <UpsellSettingsClient
+        guidebookId={guidebookId}
+        guidebookTitle={guidebook.title}
+        initialItems={items || []}
+        initialRequests={requests || []}
+        initialStats={
+          stats || {
+            pending_requests: 0,
+            confirmed_requests: 0,
+            cancelled_requests: 0,
+          }
         }
-      }
-    />
+      />
+    </>
   );
 }
