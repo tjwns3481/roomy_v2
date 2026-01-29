@@ -1,113 +1,120 @@
+/* @TASK P8-S1-T1 - AirBnB 스타일 디자인 시스템 */
 @import "tailwindcss";
 @config "../../tailwind.config.ts";
 
 @layer base {
   :root {
     /* ============================
-       Roomy Design System V2
-       감성 중심 디자인 - Anti-AI-Slop
+       AirBnB Design System
+       따뜻하고 환영하는 디자인
        ============================ */
 
-    /* Base Colors */
-    --ink: #1A1A1A;
-    --charcoal: #3D3D3D;
-    --stone: #6B6B6B;
-    --mist: #A3A3A3;
-    --cloud: #E8E8E8;
-    --snow: #F7F7F7;
+    /* Primary Colors */
+    --primary: #FF385C;
+    --primary-light: #FFE4E8;
+    --primary-dark: #E31C5F;
 
-    /* Accent Colors */
-    --coral: #FF6B5B;
-    --coral-light: #FFF0EE;
-    --mint: #00C9A7;
-    --mint-light: #E6FAF6;
-    --amber: #FFB800;
-    --amber-light: #FFFAE6;
+    /* Secondary Colors */
+    --secondary: #00A699; /* Teal */
+    --accent: #FC642D; /* Orange */
+
+    /* Neutral Colors */
+    --text-primary: #222222;
+    --text-secondary: #717171;
+    --text-tertiary: #B0B0B0;
+    --surface: #F7F7F7;
+    --border: #DDDDDD;
+
+    /* Semantic Colors */
+    --success: #00A699;
+    --warning: #FFB400;
+    --error: #C13515;
+    --info: #008489;
 
     /* shadcn/ui 호환 */
     --background: 0 0% 100%;
-    --foreground: 0 0% 10%;
+    --foreground: 210 11% 13%; /* #222222 */
 
     --card: 0 0% 97%;
-    --card-foreground: 0 0% 10%;
+    --card-foreground: 210 11% 13%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 10%;
+    --popover-foreground: 210 11% 13%;
 
-    --primary: 6 100% 68%; /* coral */
+    --primary-hsl: 348 100% 61%; /* #FF385C */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 166 100% 39%; /* mint */
+    --secondary-hsl: 174 100% 33%; /* #00A699 */
     --secondary-foreground: 0 0% 100%;
 
     --muted: 0 0% 97%;
-    --muted-foreground: 0 0% 42%;
+    --muted-foreground: 0 0% 44%; /* #717171 */
 
-    --accent: 45 100% 50%; /* amber */
-    --accent-foreground: 0 0% 10%;
+    --accent-hsl: 18 97% 59%; /* #FC642D */
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 6 100% 68%;
+    --destructive: 9 80% 43%; /* #C13515 */
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 91%;
-    --input: 0 0% 91%;
-    --ring: 6 100% 68%;
+    --border: 0 0% 87%; /* #DDDDDD */
+    --input: 0 0% 87%;
+    --ring: 348 100% 61%;
 
     --radius: 0.5rem;
   }
 
   .dark {
-    --background: 0 0% 10%;
+    --background: 210 11% 13%;
     --foreground: 0 0% 98%;
-    --card: 0 0% 12%;
+    --card: 210 11% 15%;
     --card-foreground: 0 0% 98%;
-    --primary: 6 100% 68%;
+    --primary-hsl: 348 100% 61%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 166 100% 39%;
+    --secondary-hsl: 174 100% 33%;
     --secondary-foreground: 0 0% 100%;
   }
 }
 
 @layer base {
   * {
-    @apply border-cloud;
+    @apply border-border;
   }
 
   body {
-    @apply bg-white text-ink antialiased;
+    @apply bg-white text-text-primary antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 
-  /* 감성 타이포그래피 */
+  /* AirBnB 타이포그래피 */
   h1 {
-    @apply text-h1 text-ink;
+    @apply text-h1 text-text-primary font-bold;
   }
 
   h2 {
-    @apply text-h2 text-ink;
+    @apply text-h2 text-text-primary font-semibold;
   }
 
   h3 {
-    @apply text-h3 text-ink;
+    @apply text-h3 text-text-primary font-semibold;
   }
 
   h4 {
-    @apply text-h4 text-ink;
+    @apply text-h4 text-text-primary font-medium;
   }
 
   p {
-    @apply text-body text-charcoal;
+    @apply text-body text-text-secondary;
   }
 
-  /* 포커스 링 - 코랄 컬러 */
+  /* 포커스 링 - Primary 컬러 */
   *:focus-visible {
-    @apply outline-none ring-2 ring-coral ring-offset-2;
+    @apply outline-none ring-2 ring-primary ring-offset-2;
   }
 
   /* 선택 영역 */
   ::selection {
-    background-color: var(--coral-light);
-    color: var(--ink);
+    background-color: var(--primary-light);
+    color: var(--text-primary);
   }
 
   /* 스크롤바 - 미니멀 */
@@ -117,15 +124,15 @@
   }
 
   ::-webkit-scrollbar-track {
-    @apply bg-snow;
+    @apply bg-surface;
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-mist rounded-full;
+    @apply bg-text-tertiary rounded-full;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-stone;
+    @apply bg-text-secondary;
   }
 }
 
@@ -184,40 +191,47 @@
     border-color: var(--theme-primary);
   }
 
-  /* V2 유틸리티 클래스 */
+  /* AirBnB 스타일 유틸리티 클래스 */
 
-  /* 그라데이션 텍스트 */
-  .gradient-text {
-    @apply bg-gradient-to-r from-coral to-amber bg-clip-text text-transparent;
+  /* AirBnB 버튼 */
+  .btn-airbnb-primary {
+    @apply px-6 py-3.5 bg-primary text-white rounded-lg font-semibold
+      hover:bg-primary-dark active:scale-[0.98] transition-all duration-200
+      shadow-airbnb-md hover:shadow-airbnb-lg;
   }
 
-  /* 미니멀 버튼 */
-  .btn-primary {
-    @apply px-8 py-4 bg-coral text-white font-semibold rounded-full
-      hover:bg-coral-dark transition-all duration-300
-      shadow-coral hover:shadow-coral-lg;
+  .btn-airbnb-secondary {
+    @apply px-6 py-3.5 bg-white text-text-primary rounded-lg font-semibold
+      border border-text-primary hover:bg-surface transition-colors;
   }
 
-  .btn-secondary {
-    @apply px-8 py-4 bg-transparent text-ink font-semibold rounded-full
-      border-2 border-ink hover:bg-ink hover:text-white transition-all duration-300;
+  .btn-airbnb-ghost {
+    @apply px-4 py-2 text-text-primary rounded-lg font-medium
+      hover:bg-surface transition-colors;
   }
 
-  .btn-ghost {
-    @apply px-6 py-3 text-stone font-medium hover:text-ink transition-colors;
+  .btn-airbnb-icon {
+    @apply w-12 h-12 flex items-center justify-center rounded-full
+      bg-white shadow-airbnb-md hover:shadow-airbnb-lg hover:scale-105 transition-all;
   }
 
-  /* 미니멀 카드 */
-  .card-minimal {
-    @apply bg-white border border-cloud rounded-2xl p-8
-      hover:border-coral/30 hover:shadow-soft
-      transition-all duration-500;
+  /* AirBnB 카드 */
+  .card-airbnb {
+    @apply group bg-white rounded-xl overflow-hidden
+      hover:shadow-airbnb-lg transition-shadow duration-300;
   }
 
-  /* 미니멀 배지 */
-  .badge-minimal {
-    @apply inline-flex items-center gap-2 px-4 py-2
-      bg-snow text-charcoal text-caption font-medium rounded-full;
+  /* AirBnB 인풋 */
+  .input-airbnb {
+    @apply w-full px-4 py-3.5 border border-border rounded-lg
+      focus:outline-none focus:border-text-primary focus:ring-1 focus:ring-text-primary
+      placeholder:text-text-tertiary transition-colors;
+  }
+
+  /* AirBnB 검색바 */
+  .searchbar-airbnb {
+    @apply flex items-center gap-4 p-2 bg-white rounded-full
+      shadow-airbnb-lg border border-border;
   }
 
   /* 섹션 간격 */
@@ -226,11 +240,15 @@
   }
 
   /* 애니메이션 딜레이 */
-  .animation-delay-2000 {
-    animation-delay: 2s;
+  .animation-delay-200 {
+    animation-delay: 200ms;
   }
 
-  .animation-delay-4000 {
-    animation-delay: 4s;
+  .animation-delay-400 {
+    animation-delay: 400ms;
+  }
+
+  .animation-delay-600 {
+    animation-delay: 600ms;
   }
 }

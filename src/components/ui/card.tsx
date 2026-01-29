@@ -1,3 +1,4 @@
+// @TASK P8-S1-T1 - AirBnB 스타일 Card 컴포넌트
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
@@ -9,7 +10,7 @@ const Card = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "rounded-xl border bg-card text-card-foreground shadow",
+      "rounded-xl bg-white border border-border text-card-foreground shadow-airbnb-md hover:shadow-airbnb-lg transition-shadow duration-300",
       className
     )}
     {...props}
@@ -35,7 +36,7 @@ const CardTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("font-semibold leading-none tracking-tight", className)}
+    className={cn("text-h4 font-semibold text-text-primary", className)}
     {...props}
   />
 ))
@@ -47,7 +48,7 @@ const CardDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("text-sm text-muted-foreground", className)}
+    className={cn("text-body-sm text-text-secondary", className)}
     {...props}
   />
 ))
