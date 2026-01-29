@@ -13,7 +13,17 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
-import type { Session } from 'next-auth';
+
+// Clerk 전환 후 자체 Session 타입 정의 (next-auth 대체)
+interface Session {
+  user: {
+    id: string;
+    email: string;
+    name: string;
+    image?: string;
+    role: 'customer' | 'admin';
+  };
+}
 
 /**
  * 관리자 역할 체크 (NextAuth Session 기반)
@@ -87,7 +97,7 @@ export async function isAdminUser(
  * }
  * ```
  */
-export async function checkAdminRole(_supabase?: any): Promise<{
+export async function checkAdminRole(_supabase?: unknown): Promise<{
   isAdmin: boolean;
   user: Session['user'] | null;
   session: Session | null;

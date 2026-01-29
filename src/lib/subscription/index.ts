@@ -148,7 +148,8 @@ export async function getUserSubscription(userId: string): Promise<Subscription 
 export async function getUserPlan(userId: string): Promise<SubscriptionPlan> {
   const supabase = await createServerClient();
 
-  const { data, error } = await supabase.rpc('get_user_plan', {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data, error } = await (supabase.rpc as any)('get_user_plan', {
     p_user_id: userId,
   });
 
@@ -194,7 +195,7 @@ export async function getPlanLimits(plan: SubscriptionPlan): Promise<PlanLimits>
     };
   }
 
-  return mapPlanLimitsRow(data);
+  return mapPlanLimitsRow(data as unknown as PlanLimitsRow);
 }
 
 /**
@@ -204,9 +205,9 @@ export async function getPlanLimits(plan: SubscriptionPlan): Promise<PlanLimits>
  * @returns 플랜 제한 정보
  */
 export async function getUserPlanLimits(userId: string): Promise<PlanLimits> {
-  const supabase = await createServerClient();
+  const supabase = createAdminClient();
 
-  const { data, error } = await supabase.rpc('get_user_plan_limits', {
+  const { data, error } = await (supabase.rpc as any)('get_user_plan_limits', {
     p_user_id: userId,
   });
 
@@ -237,7 +238,7 @@ export async function getAllPlans(): Promise<PlanLimits[]> {
     return [];
   }
 
-  return data.map(mapPlanLimitsRow);
+  return data.map((row) => mapPlanLimitsRow(row as unknown as PlanLimitsRow));
 }
 
 // ============================================================
@@ -263,11 +264,11 @@ export async function checkPlanLimit(
   userId: string,
   feature: 'guidebooks' | 'ai'
 ): Promise<PlanLimitCheck> {
-  const supabase = await createServerClient();
+  const supabase = createAdminClient();
 
   if (feature === 'guidebooks') {
     // 가이드북 수 체크
-    const { data: limits } = await supabase.rpc('get_user_plan_limits', {
+    const { data: limits } = await (supabase.rpc as any)('get_user_plan_limits', {
       p_user_id: userId,
     });
 
@@ -296,7 +297,7 @@ export async function checkPlanLimit(
     };
   } else {
     // AI 사용량 체크
-    const { data, error } = await supabase.rpc('check_ai_limit', {
+    const { data, error } = await (supabase.rpc as any)('check_ai_limit', {
       p_user_id: userId,
     });
 
@@ -334,7 +335,7 @@ export async function getUsageInfo(userId: string): Promise<UsageInfo> {
     .eq('user_id', userId);
 
   // AI 사용량 조회
-  const { data: aiLimitData } = await supabase.rpc('check_ai_limit', {
+  const { data: aiLimitData } = await (supabase.rpc as any)('check_ai_limit', {
     p_user_id: userId,
   });
 
@@ -386,7 +387,7 @@ export async function upgradePlan(
   const periodEnd = new Date();
   periodEnd.setFullYear(periodEnd.getFullYear() + 1);
 
-  const { data, error } = await supabase.rpc('update_subscription_from_payment', {
+  const { data, error } = await (supabase.rpc as any)('update_subscription_from_payment', {
     p_user_id: userId,
     p_plan: plan,
     p_payment_provider: paymentInfo?.paymentProvider ?? null,

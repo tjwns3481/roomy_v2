@@ -1,13 +1,13 @@
 // @TASK P4-T4.1 - 대시보드 헤더
 // @SPEC docs/planning/03-user-flow.md#호스트-대시보드
+// @TASK Clerk-Auth - Clerk로 인증 전환
 
 'use client';
 
 import { Menu, Bell, User, Settings, LogOut } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { signOut, useSession } from 'next-auth/react';
+import { useClerk, useUser } from '@clerk/nextjs';
 
 interface HeaderProps {
   onMenuClick: () => void;
@@ -16,8 +16,8 @@ interface HeaderProps {
 export default function Header({ onMenuClick }: HeaderProps) {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const router = useRouter();
-  const { data: session } = useSession();
+  const { signOut } = useClerk();
+  const { user } = useUser();
 
   // 드롭다운 외부 클릭 감지
   useEffect(() => {
@@ -32,11 +32,13 @@ export default function Header({ onMenuClick }: HeaderProps) {
   }, []);
 
   const handleLogout = async () => {
-    await signOut({ callbackUrl: '/login' });
+    await signOut({ redirectUrl: '/login' });
   };
 
-  const displayName = session?.user?.name || session?.user?.email?.split('@')[0] || '호스트';
-  const displayEmail = session?.user?.email || 'host@roomy.com';
+  const displayName = user?.firstName
+    ? `${user.firstName} ${user.lastName || ''}`.trim()
+    : user?.emailAddresses[0]?.emailAddress?.split('@')[0] || '호스트';
+  const displayEmail = user?.emailAddresses[0]?.emailAddress || 'host@roomy.com';
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 h-16 bg-white border-b border-gray-200">

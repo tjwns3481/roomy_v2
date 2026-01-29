@@ -13,13 +13,14 @@ import { auth } from '@/lib/auth';
 import type { SubscriptionPlan } from '@/types/subscription';
 
 interface CheckoutPageProps {
-  searchParams: {
+  searchParams: Promise<{
     plan?: string;
-  };
+  }>;
 }
 
 async function CheckoutContent({ searchParams }: CheckoutPageProps) {
-  const plan = searchParams.plan as Exclude<SubscriptionPlan, 'free'> | null;
+  const params = await searchParams;
+  const plan = params.plan as Exclude<SubscriptionPlan, 'free'> | null;
 
   // 플랜 검증
   if (!plan || (plan !== 'pro' && plan !== 'business')) {
@@ -65,7 +66,7 @@ async function CheckoutContent({ searchParams }: CheckoutPageProps) {
   return <CheckoutClient plan={plan} paymentRequest={paymentRequest} error={error} />;
 }
 
-export default function CheckoutPage({ searchParams }: CheckoutPageProps) {
+export default async function CheckoutPage({ searchParams }: CheckoutPageProps) {
   return (
     <Suspense
       fallback={

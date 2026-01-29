@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import Link from 'next/link';
 import { ShoppingCart } from 'lucide-react';
-import { useSession } from 'next-auth/react';
+import { useUser } from '@clerk/nextjs';
 import { useCartStore } from '@/stores/cart-store';
 
 /**
@@ -12,21 +12,24 @@ import { useCartStore } from '@/stores/cart-store';
  * - useCart 훅으로 실시간 수량 반영
  * - 세션 변경 시 장바구니 갱신
  * - 관리자는 장바구니 아이콘 숨김
+ *
+ * @TASK Clerk-Auth - Clerk로 인증 전환
  */
 export function CartBadge() {
   const { items, fetchCart } = useCartStore();
-  const { data: session, status } = useSession();
+  const { user, isLoaded } = useUser();
 
-  const isAdmin = session?.user?.role === 'admin';
+  // Clerk 메타데이터에서 역할 확인 (기본값: customer)
+  const isAdmin = user?.publicMetadata?.role === 'admin';
 
   // 컴포넌트 마운트 및 세션 변경 시 장바구니 조회
   useEffect(() => {
     // 세션 로딩 중이면 대기
-    if (status === 'loading') return;
+    if (!isLoaded) return;
     // 관리자는 장바구니 조회 안함
     if (isAdmin) return;
     fetchCart();
-  }, [fetchCart, session?.user?.id, status, isAdmin]);
+  }, [fetchCart, user?.id, isLoaded, isAdmin]);
 
   // 관리자는 장바구니 아이콘 숨김
   if (isAdmin) {

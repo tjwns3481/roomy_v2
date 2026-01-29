@@ -4,7 +4,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
-import { createServerClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/server';
 import { z } from 'zod';
 import { withGuidebookLimit } from '@/lib/subscription/middleware';
 
@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const validatedData = createGuidebookSchema.parse(body);
 
-    const supabase = await createServerClient();
+    const supabase = createAdminClient();
 
     // 슬러그 중복 확인
     const { data: existingGuidebook } = await supabase
@@ -153,7 +153,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: '로그인이 필요합니다' }, { status: 401 });
     }
 
-    const supabase = await createServerClient();
+    const supabase = createAdminClient();
 
     const { data: guidebooks, error } = await supabase
       .from('guidebooks')
@@ -164,7 +164,7 @@ export async function GET(req: NextRequest) {
     if (error) {
       console.error('가이드북 조회 오류:', error);
       return NextResponse.json(
-        { error: '가이드북 조회 중 오류가 발생했습니다' },
+        { error: '가이드북 조회 중 오류가 발생했습니다', details: error.message, code: error.code },
         { status: 500 }
       );
     }

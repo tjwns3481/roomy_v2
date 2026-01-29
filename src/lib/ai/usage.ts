@@ -111,7 +111,7 @@ export async function recordAiUsage(params: RecordAiUsageParams): Promise<string
 
   const { data, error } = await supabase.rpc('record_ai_usage', {
     p_user_id: params.userId,
-    p_guidebook_id: params.guidebookId ?? null,
+    p_guidebook_id: params.guidebookId ?? undefined,
     p_tokens_used: params.tokensUsed,
     p_model: params.model,
     p_action: params.action,

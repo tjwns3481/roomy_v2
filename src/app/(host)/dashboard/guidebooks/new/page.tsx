@@ -47,9 +47,9 @@ export default function NewGuidebookPage() {
 
       // 생성 방식에 따라 다른 페이지로 이동
       if (method === 'ai') {
-        router.push(`/dashboard/editor/${result.guidebook.id}?ai=true`);
+        router.push(`/editor/${result.guidebook.id}?ai=true`);
       } else {
-        router.push(`/dashboard/editor/${result.guidebook.id}`);
+        router.push(`/editor/${result.guidebook.id}`);
       }
     } catch (error) {
       console.error('가이드북 생성 오류:', error);

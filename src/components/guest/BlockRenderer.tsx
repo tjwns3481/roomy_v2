@@ -3,9 +3,9 @@
 
 'use client';
 
-import React, { Suspense } from 'react';
+import React from 'react';
 import dynamic from 'next/dynamic';
-import { Block, BlockContent } from '@/types/guidebook';
+import { Block } from '@/types/guidebook';
 import {
   HeroBlock,
   QuickInfoBlock,
@@ -57,25 +57,27 @@ export function BlockRenderer({ block }: BlockRendererProps) {
     return null;
   }
 
-  const content = block.content as BlockContent;
+  // 블록 컴포넌트들이 서로 다른 타입 정의를 사용하므로 타입 검사 우회
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const content = block.content as any;
 
   switch (block.type) {
     case 'hero':
-      return <HeroBlock content={content as any} />;
+      return <HeroBlock content={content} />;
     case 'quickInfo':
-      return <QuickInfoBlock content={content as any} />;
+      return <QuickInfoBlock content={content} />;
     case 'amenities':
-      return <AmenitiesBlock content={content as any} />;
+      return <AmenitiesBlock content={content} />;
     case 'rules':
-      return <RulesBlock content={content as any} />;
+      return <RulesBlock content={content} />;
     case 'map':
-      return <MapBlock content={content as any} />;
+      return <MapBlock content={content} />;
     case 'gallery':
-      return <GalleryBlock content={content as any} />;
+      return <GalleryBlock content={content} />;
     case 'notice':
-      return <NoticeBlock content={content as any} />;
+      return <NoticeBlock content={content} />;
     case 'custom':
-      return <CustomBlock content={content as any} />;
+      return <CustomBlock content={content} />;
     default:
       console.warn(`Unknown block type: ${block.type}`);
       return null;

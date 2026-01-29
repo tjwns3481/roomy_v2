@@ -259,6 +259,7 @@ export type BlockContent =
 /**
  * 블록 타입별 스키마 매핑
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const blockContentSchemas: Record<BlockType, z.ZodSchema<any>> = {
   hero: heroContentSchema,
   quickInfo: quickInfoContentSchema,

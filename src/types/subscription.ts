@@ -172,7 +172,7 @@ export interface SubscriptionInfo {
 // 구독 상태 조회
 // ============================================================
 
-export interface SubscriptionStatus {
+export interface SubscriptionStatusInfo {
     subscription: Subscription | null;
     limits: PlanLimits;
     isActive: boolean;

@@ -21,8 +21,10 @@ export function ShareSocialSection({ url, title, onShare }: ShareSocialSectionPr
 
   const handleKakaoShare = () => {
     // Kakao SDK가 로드되어 있는지 확인
-    if (typeof window !== 'undefined' && (window as any).Kakao) {
-      const Kakao = (window as any).Kakao;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if (typeof window !== 'undefined' && (window as unknown as Record<string, unknown>).Kakao) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const Kakao = (window as unknown as Record<string, any>).Kakao;
 
       // Kakao SDK 초기화 (이미 초기화되어 있지 않을 경우)
       if (!Kakao.isInitialized()) {

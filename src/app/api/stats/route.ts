@@ -83,8 +83,9 @@ export async function GET(request: NextRequest) {
       0
     );
 
-    // 3. 일별 조회수 조회 (RPC)
-    const { data: dailyViewsData, error: dailyError } = await supabase.rpc(
+    // 3. 일별 조회수 조회 (RPC) - RPC 함수가 없을 수 있으므로 타입 우회
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: dailyViewsData, error: dailyError } = await (supabase.rpc as any)(
       'get_user_daily_views',
       {
         p_user_id: userId,
@@ -118,8 +119,9 @@ export async function GET(request: NextRequest) {
       }).reverse();
     }
 
-    // 4. 가이드북별 오늘 조회수 조회
-    const { data: todayByGuidebook, error: todayError } = await supabase.rpc(
+    // 4. 가이드북별 오늘 조회수 조회 - RPC 함수가 없을 수 있으므로 타입 우회
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: todayByGuidebook, error: todayError } = await (supabase.rpc as any)(
       'get_user_today_views_by_guidebook',
       {
         p_user_id: userId,
@@ -139,11 +141,15 @@ export async function GET(request: NextRequest) {
     });
 
     let aiUsage = { used: 0, limit: 3 }; // free plan default
-    if (aiUsageData && aiUsageData.length > 0) {
-      aiUsage = {
-        used: Number(aiUsageData[0].used) || 0,
-        limit: Number(aiUsageData[0].limit) || 3,
-      };
+    if (aiUsageData) {
+      // RPC 반환값이 단일 객체인 경우
+      const data = Array.isArray(aiUsageData) ? aiUsageData[0] : aiUsageData;
+      if (data) {
+        aiUsage = {
+          used: Number(data.used_this_month) || 0,
+          limit: Number(data.limit_this_month) || 3,
+        };
+      }
     }
 
     // 6. 가이드북별 통계 생성

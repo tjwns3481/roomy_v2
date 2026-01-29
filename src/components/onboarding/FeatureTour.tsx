@@ -85,7 +85,7 @@ export const editorTourSteps: TourStep[] = [
   },
 ];
 
-interface FeatureTourProps {
+export interface FeatureTourProps {
   steps: TourStep[];
   tourId: string; // localStorage 키 접두어
   autoStart?: boolean;

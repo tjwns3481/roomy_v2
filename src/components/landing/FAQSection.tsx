@@ -1,17 +1,20 @@
-// @TASK P7-T7.3 - 랜딩 페이지 FAQ 섹션
-// @SPEC docs/planning/06-tasks.md#P7-T7.3
+/**
+ * @TASK P7-T7.3 + UI-V2 - 랜딩 페이지 FAQ 섹션
+ * 감성 중심 디자인 - 미니멀 아코디언, 깔끔한 타이포그래피
+ */
 
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { Plus, Minus } from 'lucide-react';
+import Link from 'next/link';
 
 const faqs = [
   {
     question: '무료 플랜으로 무엇을 할 수 있나요?',
     answer:
-      '무료 플랜에서는 가이드북 1개를 만들 수 있으며, AI 자동 생성 기능을 월 3회까지 사용할 수 있습니다. 기본 블록(히어로, 공지사항, 지도 등)을 사용하여 가이드북을 구성하고, QR 코드로 게스트에게 공유할 수 있습니다. Roomy 워터마크가 표시됩니다.',
+      '무료 플랜에서는 가이드북 1개를 만들 수 있으며, AI 자동 생성 기능을 월 3회까지 사용할 수 있습니다. 기본 블록(히어로, 공지사항, 지도 등)을 사용하여 가이드북을 구성하고, QR 코드로 게스트에게 공유할 수 있습니다.',
   },
   {
     question: 'AI 생성은 어떻게 작동하나요?',
@@ -26,7 +29,7 @@ const faqs = [
   {
     question: '결제는 어떻게 진행되나요?',
     answer:
-      '모든 플랜은 14일 무료 체험이 가능합니다. 체험 기간 동안 언제든지 해지할 수 있으며, 별도 비용은 발생하지 않습니다. 체험 후 계속 사용하시려면 연간 결제로 진행되며, 카드 결제를 통해 자동으로 갱신됩니다. 언제든지 플랜 변경이나 해지가 가능합니다.',
+      '모든 플랜은 14일 무료 체험이 가능합니다. 체험 기간 동안 언제든지 해지할 수 있으며, 별도 비용은 발생하지 않습니다. 체험 후 계속 사용하시려면 연간 결제로 진행되며, 카드 결제를 통해 자동으로 갱신됩니다.',
   },
   {
     question: 'Pro 플랜과 Business 플랜의 차이는 무엇인가요?',
@@ -40,87 +43,95 @@ const faqs = [
   },
 ];
 
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-    },
-  },
-};
-
-const item = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0 },
-};
-
-function FAQItem({ question, answer, index }: { question: string; answer: string; index: number }) {
-  const [isOpen, setIsOpen] = useState(false);
-
+function FAQItem({
+  question,
+  answer,
+  isOpen,
+  onToggle,
+}: {
+  question: string;
+  answer: string;
+  isOpen: boolean;
+  onToggle: () => void;
+}) {
   return (
-    <motion.div
-      variants={item}
-      className="border-b border-gray-200 last:border-0"
-    >
+    <div className="border-b border-cloud last:border-0">
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={onToggle}
         className="w-full py-6 flex items-start justify-between gap-4 text-left group"
       >
-        <span className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
+        <span className="text-lg font-semibold text-ink group-hover:text-coral transition-colors duration-300">
           {question}
         </span>
-        <ChevronDown
-          className={`w-6 h-6 text-gray-500 flex-shrink-0 transition-transform ${
-            isOpen ? 'rotate-180' : ''
-          }`}
-        />
+        <div
+          className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300
+            ${isOpen ? 'bg-coral text-white' : 'bg-snow text-stone group-hover:bg-coral-light'}`}
+        >
+          {isOpen ? (
+            <Minus className="w-4 h-4" />
+          ) : (
+            <Plus className="w-4 h-4" />
+          )}
+        </div>
       </button>
-      <motion.div
-        initial={false}
-        animate={{
-          height: isOpen ? 'auto' : 0,
-          opacity: isOpen ? 1 : 0,
-        }}
-        transition={{ duration: 0.3 }}
-        className="overflow-hidden"
-      >
-        <p className="pb-6 text-gray-600 leading-relaxed">{answer}</p>
-      </motion.div>
-    </motion.div>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="overflow-hidden"
+          >
+            <p className="pb-6 text-stone leading-relaxed">{answer}</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }
 
 export function FAQSection() {
+  const [openIndex, setOpenIndex] = useState<number | null>(0);
+
   return (
-    <section className="w-full py-16 lg:py-24 bg-gray-50">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="faq" className="py-24 lg:py-32 bg-snow">
+      <div className="max-w-4xl mx-auto px-6 lg:px-8">
         {/* 섹션 헤더 */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900">
+          <span className="text-sm font-semibold text-coral uppercase tracking-widest">
+            FAQ
+          </span>
+          <h2 className="mt-4 text-4xl sm:text-5xl font-bold text-ink tracking-tight">
             자주 묻는 질문
           </h2>
-          <p className="mt-4 text-lg text-gray-600">
+          <p className="mt-4 text-lg text-stone">
             궁금하신 점이 있으신가요?
           </p>
         </motion.div>
 
         {/* FAQ 목록 */}
         <motion.div
-          variants={container}
-          initial="hidden"
-          whileInView="show"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="bg-white rounded-2xl shadow-sm p-8"
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="bg-white rounded-3xl border border-cloud p-8 lg:p-10"
         >
           {faqs.map((faq, index) => (
-            <FAQItem key={index} {...faq} index={index} />
+            <FAQItem
+              key={index}
+              question={faq.question}
+              answer={faq.answer}
+              isOpen={openIndex === index}
+              onToggle={() => setOpenIndex(openIndex === index ? null : index)}
+            />
           ))}
         </motion.div>
 
@@ -129,18 +140,19 @@ export function FAQSection() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.3 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
           className="mt-12 text-center"
         >
-          <p className="text-gray-600 mb-4">
+          <p className="text-stone mb-4">
             다른 질문이 있으신가요?
           </p>
-          <a
+          <Link
             href="mailto:support@roomy.kr"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-all"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-ink text-white rounded-full font-semibold
+              hover:bg-charcoal transition-colors duration-300"
           >
             고객센터 문의하기
-          </a>
+          </Link>
         </motion.div>
       </div>
     </section>

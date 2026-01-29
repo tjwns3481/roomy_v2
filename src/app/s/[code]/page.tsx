@@ -3,6 +3,7 @@
 
 import { redirect, notFound } from 'next/navigation';
 import { Metadata } from 'next';
+import Link from 'next/link';
 import { createServerClient } from '@/lib/supabase/server';
 
 // Edge Runtime 사용 (빠른 리다이렉트)
@@ -21,32 +22,34 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const supabase = await createServerClient();
 
   // short_code로 guidebook 정보 조회
+  // 타입 정의 없이 직접 쿼리 (관계 미정의 우회)
   const { data: shortUrl } = await supabase
     .from('short_urls')
-    .select(`
-      guidebook_id,
-      guidebooks (
-        title,
-        description,
-        og_image_url
-      )
-    `)
+    .select('guidebook_id')
     .eq('short_code', code)
     .eq('is_active', true)
     .single();
 
-  if (!shortUrl || !shortUrl.guidebooks) {
+  if (!shortUrl) {
     return {
       title: '링크를 찾을 수 없습니다 - Roomy',
       description: '요청하신 가이드북 링크가 존재하지 않습니다.',
     };
   }
 
-  const guidebook = shortUrl.guidebooks as {
-    title: string;
-    description: string | null;
-    og_image_url: string | null;
-  };
+  // 가이드북 정보 별도 조회
+  const { data: guidebook } = await supabase
+    .from('guidebooks')
+    .select('title, description, og_image_url')
+    .eq('id', shortUrl.guidebook_id)
+    .single();
+
+  if (!guidebook) {
+    return {
+      title: '링크를 찾을 수 없습니다 - Roomy',
+      description: '요청하신 가이드북 링크가 존재하지 않습니다.',
+    };
+  }
 
   return {
     title: `${guidebook.title} - Roomy`,
@@ -127,16 +130,7 @@ async function fallbackRedirect(
   // 단축 URL 정보 조회
   const { data: shortUrl } = await supabase
     .from('short_urls')
-    .select(`
-      id,
-      guidebook_id,
-      expires_at,
-      is_active,
-      guidebooks (
-        slug,
-        status
-      )
-    `)
+    .select('id, guidebook_id, expires_at, is_active, clicks')
     .eq('short_code', code)
     .single();
 
@@ -155,10 +149,12 @@ async function fallbackRedirect(
     return <ExpiredLinkPage />;
   }
 
-  const guidebook = shortUrl.guidebooks as {
-    slug: string;
-    status: string;
-  } | null;
+  // 가이드북 정보 별도 조회
+  const { data: guidebook } = await supabase
+    .from('guidebooks')
+    .select('slug, status')
+    .eq('id', shortUrl.guidebook_id)
+    .single();
 
   // 가이드북이 없거나 미공개
   if (!guidebook || guidebook.status !== 'published') {
@@ -168,7 +164,7 @@ async function fallbackRedirect(
   // 클릭 수 증가 (폴백)
   await supabase
     .from('short_urls')
-    .update({ clicks: (shortUrl as { clicks?: number }).clicks ? ((shortUrl as { clicks: number }).clicks + 1) : 1 })
+    .update({ clicks: (shortUrl.clicks || 0) + 1 })
     .eq('id', shortUrl.id);
 
   // 리다이렉트
@@ -206,12 +202,12 @@ function ExpiredLinkPage() {
           <br />
           호스트에게 새로운 링크를 요청해 주세요.
         </p>
-        <a
+        <Link
           href="/"
           className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition-colors"
         >
           Roomy 홈으로
-        </a>
+        </Link>
       </div>
     </div>
   );

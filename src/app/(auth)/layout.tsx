@@ -1,12 +1,12 @@
 /**
  * @TASK P7-T7.1 - Auth Layout
  * @TASK P7-T7.4 - 메타데이터 추가
- * @SPEC 인증 페이지 공통 레이아웃
+ * @TASK Clerk-Auth - Clerk 전용 인증 레이아웃
  *
  * 기능:
- * - 중앙 정렬 레이아웃
- * - 로고 표시
- * - 반응형 디자인
+ * - Clerk SignIn/SignUp 컴포넌트 전용 레이아웃
+ * - 최소한의 UI (로고 + 컨텐츠)
+ * - 루트 레이아웃의 Header/Footer 제외
  */
 
 import Link from 'next/link';
@@ -25,41 +25,27 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
-      {/* 헤더 */}
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+      {/* 미니멀 헤더 (로고만) */}
       <header className="py-6">
         <div className="container mx-auto px-4">
-          <Link href="/" className="inline-block">
-            <h1 className="text-2xl font-bold text-primary">Roomy</h1>
+          <Link href="/" className="inline-flex items-center gap-2">
+            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-lg">R</span>
+            </div>
+            <span className="text-xl font-bold text-gray-900">Roomy</span>
           </Link>
         </div>
       </header>
 
-      {/* 메인 콘텐츠 */}
+      {/* 메인 콘텐츠 - Clerk 컴포넌트 */}
       <main className="flex-1 flex items-center justify-center px-4 py-8">
-        <div className="w-full max-w-md">
-          {children}
-        </div>
+        {children}
       </main>
 
-      {/* 푸터 */}
-      <footer className="py-6 text-center text-sm text-muted-foreground">
-        <div className="container mx-auto px-4 space-y-2">
-          <div className="flex items-center justify-center space-x-4">
-            <Link href="/terms" className="hover:underline">
-              이용약관
-            </Link>
-            <span>|</span>
-            <Link href="/privacy" className="hover:underline">
-              개인정보처리방침
-            </Link>
-            <span>|</span>
-            <Link href="/help" className="hover:underline">
-              도움말
-            </Link>
-          </div>
-          <p>&copy; {new Date().getFullYear()} Roomy. All rights reserved.</p>
-        </div>
+      {/* 미니멀 푸터 */}
+      <footer className="py-4 text-center text-xs text-gray-500">
+        <p>&copy; {new Date().getFullYear()} Roomy. All rights reserved.</p>
       </footer>
     </div>
   );

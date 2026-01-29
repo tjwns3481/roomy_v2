@@ -90,14 +90,17 @@ export default function RootLayout({
           rel="stylesheet"
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css"
         />
+        {/* Space Grotesk - 영문 디스플레이 폰트 */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap"
+          rel="stylesheet"
+        />
       </head>
       <body className="font-sans antialiased bg-background text-foreground">
         <Providers>
-          <div className="flex flex-col min-h-screen">
-            <Header />
-            <main className="flex-1">{children}</main>
-            <Footer />
-          </div>
+          {children}
         </Providers>
       </body>
     </html>

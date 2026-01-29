@@ -8,6 +8,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useAuth } from '@clerk/nextjs';
 import type { Subscription, PlanLimits, SubscriptionPlan } from '@/types/subscription';
 
 // ============================================================
@@ -63,12 +64,19 @@ interface UseSubscriptionReturn {
 // ============================================================
 
 export function useSubscription(): UseSubscriptionReturn {
+  const { isLoaded, isSignedIn } = useAuth();
   const [data, setData] = useState<SubscriptionData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   // 구독 정보 조회
   const fetchSubscription = useCallback(async () => {
+    // 인증되지 않은 상태면 API 호출 안 함
+    if (!isLoaded || !isSignedIn) {
+      setIsLoading(false);
+      return;
+    }
+
     try {
       setIsLoading(true);
       setError(null);
@@ -77,7 +85,9 @@ export function useSubscription(): UseSubscriptionReturn {
 
       if (!response.ok) {
         if (response.status === 401) {
-          throw new Error('로그인이 필요합니다');
+          // 인증 오류 - 조용히 처리 (로그인 페이지로 리다이렉트는 상위에서 처리)
+          setIsLoading(false);
+          return;
         }
         throw new Error('구독 정보를 불러오는데 실패했습니다');
       }
@@ -90,7 +100,7 @@ export function useSubscription(): UseSubscriptionReturn {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [isLoaded, isSignedIn]);
 
   // 구독 업그레이드
   const upgrade = useCallback(async (plan: 'pro' | 'business'): Promise<boolean> => {

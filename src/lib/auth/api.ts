@@ -7,8 +7,18 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
-import type { Session } from 'next-auth';
 import type { UserRole } from './constants';
+
+// Clerk 전환 후 자체 Session 타입 정의 (next-auth 대체)
+interface Session {
+  user: {
+    id: string;
+    email: string;
+    name: string;
+    image?: string;
+    role: 'customer' | 'admin';
+  };
+}
 
 /**
  * 인증된 핸들러 타입

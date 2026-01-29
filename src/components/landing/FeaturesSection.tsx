@@ -1,133 +1,171 @@
-// @TASK P7-T7.3 - 랜딩 페이지 기능 소개 섹션
-// @SPEC docs/planning/06-tasks.md#P7-T7.3
+/**
+ * @TASK P7-T7.3 + UI-V2 - 랜딩 페이지 기능 소개 섹션
+ * 감성 중심 디자인 - 미니멀 카드, 비대칭 그리드
+ */
 
 'use client';
 
 import { motion } from 'framer-motion';
-import { Link2, Edit3, QrCode, Sparkles } from 'lucide-react';
+import { Sparkles, Layers, QrCode, MessageCircle } from 'lucide-react';
 
 const features = [
   {
+    number: '01',
     icon: Sparkles,
     title: 'AI 자동 생성',
-    description: '에어비앤비 URL만 입력하세요. AI가 숙소 정보를 분석하여 가이드북을 자동으로 생성합니다.',
-    gradient: 'from-blue-500 to-cyan-500',
-    bgColor: 'bg-blue-50',
+    description: '에어비앤비 URL만 입력하면 AI가 숙소 정보를 분석해 가이드북을 자동으로 만들어드립니다.',
+    accent: 'coral',
   },
   {
-    icon: Edit3,
+    number: '02',
+    icon: Layers,
     title: '블록 에디터',
-    description: '드래그 앤 드롭으로 쉽게 커스터마이징하세요. 실시간 미리보기로 결과를 바로 확인할 수 있습니다.',
-    gradient: 'from-purple-500 to-pink-500',
-    bgColor: 'bg-purple-50',
+    description: '드래그 앤 드롭으로 자유롭게 편집하세요. 실시간 미리보기로 결과를 바로 확인할 수 있습니다.',
+    accent: 'mint',
   },
   {
+    number: '03',
     icon: QrCode,
     title: 'QR 공유',
-    description: 'QR 코드를 생성하여 게스트에게 간편하게 전달하세요. 앱 설치 없이 바로 접근 가능합니다.',
-    gradient: 'from-green-500 to-emerald-500',
-    bgColor: 'bg-green-50',
+    description: 'QR 코드 하나로 게스트에게 간편하게 전달하세요. 앱 설치 없이 바로 접근 가능합니다.',
+    accent: 'amber',
+  },
+  {
+    number: '04',
+    icon: MessageCircle,
+    title: 'AI 챗봇',
+    description: '게스트의 궁금증을 AI 챗봇이 24시간 응대합니다. 호스트의 시간을 절약해드립니다.',
+    accent: 'coral',
   },
 ];
 
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.2,
-    },
+const accentColors = {
+  coral: {
+    bg: 'bg-coral',
+    light: 'bg-coral-light',
+    text: 'text-coral',
+    border: 'group-hover:border-coral/30',
   },
-};
-
-const item = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0 },
+  mint: {
+    bg: 'bg-mint',
+    light: 'bg-mint-light',
+    text: 'text-mint',
+    border: 'group-hover:border-mint/30',
+  },
+  amber: {
+    bg: 'bg-amber',
+    light: 'bg-amber-light',
+    text: 'text-amber',
+    border: 'group-hover:border-amber/30',
+  },
 };
 
 export function FeaturesSection() {
   return (
-    <section className="w-full py-16 lg:py-24 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* 섹션 헤더 */}
+    <section id="features" className="py-24 lg:py-32 bg-snow">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        {/* 섹션 헤더 - 왼쪽 정렬 */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-16"
+          transition={{ duration: 0.6 }}
+          className="max-w-2xl mb-16"
         >
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900">
+          <span className="text-sm font-semibold text-coral uppercase tracking-widest">
+            Features
+          </span>
+          <h2 className="mt-4 text-4xl sm:text-5xl font-bold text-ink tracking-tight">
             3가지 핵심 기능으로
             <br />
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-coral to-amber bg-clip-text text-transparent">
               5분 만에 가이드북 완성
             </span>
           </h2>
-          <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
-            복잡한 설정 없이 간단하게 시작하세요
+          <p className="mt-6 text-lg text-stone">
+            복잡한 설정 없이 간단하게 시작하세요.
+            에어비앤비 링크 하나면 충분합니다.
           </p>
         </motion.div>
 
-        {/* 기능 카드 */}
-        <motion.div
-          variants={container}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-8"
-        >
+        {/* 비대칭 그리드 */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6">
           {features.map((feature, index) => {
             const Icon = feature.icon;
+            const colors = accentColors[feature.accent as keyof typeof accentColors];
+            const isLarge = index === 0 || index === 3;
+
             return (
               <motion.div
                 key={index}
-                variants={item}
-                whileHover={{ y: -8 }}
-                className="relative bg-white border border-gray-200 rounded-2xl p-8 hover:shadow-xl transition-all group"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                className={`group bg-white border border-cloud rounded-3xl p-8 lg:p-10
+                  hover:shadow-soft transition-all duration-500
+                  ${colors.border}
+                  ${isLarge ? 'lg:col-span-7' : 'lg:col-span-5'}
+                  ${index === 1 ? 'lg:col-start-8' : ''}
+                  ${index === 3 ? 'lg:col-start-6' : ''}
+                `}
               >
-                {/* 배경 그라데이션 */}
-                <div className={`absolute inset-0 ${feature.bgColor} rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity`} />
+                {/* 번호 */}
+                <span className="text-sm font-medium text-mist tracking-widest">
+                  {feature.number}
+                </span>
 
-                {/* 콘텐츠 */}
-                <div className="relative">
-                  {/* 아이콘 */}
-                  <div className={`inline-flex items-center justify-center w-14 h-14 bg-gradient-to-br ${feature.gradient} rounded-xl shadow-lg mb-6`}>
-                    <Icon className="w-7 h-7 text-white" />
-                  </div>
+                {/* 아이콘 */}
+                <div className={`mt-6 w-14 h-14 ${colors.light} rounded-2xl flex items-center justify-center
+                  group-hover:scale-110 transition-transform duration-300`}
+                >
+                  <Icon className={`w-7 h-7 ${colors.text}`} />
+                </div>
 
-                  {/* 제목 */}
-                  <h3 className="text-xl font-bold text-gray-900 mb-3">
-                    {feature.title}
-                  </h3>
+                {/* 제목 */}
+                <h3 className="mt-6 text-2xl font-bold text-ink">
+                  {feature.title}
+                </h3>
 
-                  {/* 설명 */}
-                  <p className="text-gray-600 leading-relaxed">
-                    {feature.description}
-                  </p>
+                {/* 설명 */}
+                <p className="mt-4 text-stone leading-relaxed">
+                  {feature.description}
+                </p>
 
-                  {/* 장식 요소 */}
-                  <div className={`absolute -top-2 -right-2 w-20 h-20 bg-gradient-to-br ${feature.gradient} rounded-full filter blur-2xl opacity-0 group-hover:opacity-20 transition-opacity`} />
+                {/* 화살표 */}
+                <div className="mt-6 flex items-center gap-2 text-stone group-hover:text-ink transition-colors">
+                  <span className="text-sm font-medium">자세히 보기</span>
+                  <svg
+                    className="w-4 h-4 group-hover:translate-x-1 transition-transform"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
                 </div>
               </motion.div>
             );
           })}
-        </motion.div>
+        </div>
 
-        {/* 추가 설명 */}
+        {/* 플랫폼 지원 배지 */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="mt-16 text-center"
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="mt-16 flex flex-wrap items-center justify-center gap-4"
         >
-          <div className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-full">
-            <Link2 className="w-5 h-5 text-blue-600" />
-            <span className="text-sm font-medium text-gray-700">
-              에어비앤비, 네이버 블로그 등 다양한 플랫폼 지원
+          <span className="text-sm text-stone">지원 플랫폼:</span>
+          {['에어비앤비', '네이버 블로그', '야놀자', '여기어때'].map((platform) => (
+            <span
+              key={platform}
+              className="px-4 py-2 bg-white border border-cloud rounded-full text-sm font-medium text-charcoal"
+            >
+              {platform}
             </span>
-          </div>
+          ))}
         </motion.div>
       </div>
     </section>

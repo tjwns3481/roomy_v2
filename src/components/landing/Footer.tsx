@@ -1,10 +1,12 @@
-// @TASK P7-T7.3 - 랜딩 페이지 푸터
-// @SPEC docs/planning/06-tasks.md#P7-T7.3
+/**
+ * @TASK P7-T7.3 + UI-V2 - 랜딩 페이지 푸터
+ * 감성 중심 디자인 - 미니멀, 클린 레이아웃
+ */
 
 'use client';
 
 import Link from 'next/link';
-import { BookOpen, Mail, Instagram, Youtube } from 'lucide-react';
+import { Instagram, Youtube, Mail } from 'lucide-react';
 
 const footerLinks = {
   product: [
@@ -32,23 +34,25 @@ const socialLinks = [
 
 export function Footer() {
   return (
-    <footer className="w-full bg-gray-900 text-gray-300 border-t border-gray-800">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+    <footer className="bg-snow border-t border-cloud">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-16 lg:py-20">
         {/* 상단 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 mb-16">
           {/* 브랜드 */}
-          <div className="lg:col-span-2">
-            <Link href="/" className="inline-flex items-center gap-2 mb-4">
-              <BookOpen className="w-8 h-8 text-blue-500" />
-              <span className="text-2xl font-bold text-white">Roomy</span>
+          <div className="lg:col-span-4">
+            <Link href="/" className="inline-flex items-center gap-3">
+              <div className="w-10 h-10 bg-ink rounded-xl flex items-center justify-center">
+                <span className="text-white font-bold text-xl font-display">R</span>
+              </div>
+              <span className="text-xl font-bold text-ink tracking-tight">Roomy</span>
             </Link>
-            <p className="text-gray-400 leading-relaxed mb-4">
+            <p className="mt-6 text-stone leading-relaxed max-w-sm">
               한국형 디지털 게스트 가이드북 SaaS
               <br />
               AI로 간편하게, 게스트에게 완벽하게
             </p>
             {/* 소셜 링크 */}
-            <div className="flex items-center gap-4">
+            <div className="mt-6 flex items-center gap-3">
               {socialLinks.map((social) => {
                 const Icon = social.icon;
                 return (
@@ -57,7 +61,9 @@ export function Footer() {
                     href={social.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-10 h-10 flex items-center justify-center bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors"
+                    className="w-10 h-10 flex items-center justify-center bg-white border border-cloud rounded-xl
+                      hover:bg-ink hover:text-white hover:border-ink
+                      transition-all duration-300"
                     aria-label={social.name}
                   >
                     <Icon className="w-5 h-5" />
@@ -67,70 +73,78 @@ export function Footer() {
             </div>
           </div>
 
-          {/* 제품 */}
-          <div>
-            <h3 className="text-white font-semibold mb-4">제품</h3>
-            <ul className="space-y-3">
-              {footerLinks.product.map((link) => (
-                <li key={link.name}>
-                  <Link
-                    href={link.href}
-                    className="hover:text-white transition-colors"
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {/* 링크 그룹 */}
+          <div className="lg:col-span-8 grid grid-cols-2 sm:grid-cols-3 gap-8">
+            {/* 제품 */}
+            <div>
+              <h3 className="text-sm font-semibold text-ink uppercase tracking-widest mb-6">
+                Product
+              </h3>
+              <ul className="space-y-4">
+                {footerLinks.product.map((link) => (
+                  <li key={link.name}>
+                    <Link
+                      href={link.href}
+                      className="text-stone hover:text-ink transition-colors duration-300"
+                    >
+                      {link.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-          {/* 회사 */}
-          <div>
-            <h3 className="text-white font-semibold mb-4">회사</h3>
-            <ul className="space-y-3">
-              {footerLinks.company.map((link) => (
-                <li key={link.name}>
-                  <Link
-                    href={link.href}
-                    className="hover:text-white transition-colors"
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+            {/* 회사 */}
+            <div>
+              <h3 className="text-sm font-semibold text-ink uppercase tracking-widest mb-6">
+                Company
+              </h3>
+              <ul className="space-y-4">
+                {footerLinks.company.map((link) => (
+                  <li key={link.name}>
+                    <Link
+                      href={link.href}
+                      className="text-stone hover:text-ink transition-colors duration-300"
+                    >
+                      {link.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-          {/* 법적 정보 */}
-          <div>
-            <h3 className="text-white font-semibold mb-4">법적 정보</h3>
-            <ul className="space-y-3">
-              {footerLinks.legal.map((link) => (
-                <li key={link.name}>
-                  <Link
-                    href={link.href}
-                    className="hover:text-white transition-colors"
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            {/* 법적 정보 */}
+            <div>
+              <h3 className="text-sm font-semibold text-ink uppercase tracking-widest mb-6">
+                Legal
+              </h3>
+              <ul className="space-y-4">
+                {footerLinks.legal.map((link) => (
+                  <li key={link.name}>
+                    <Link
+                      href={link.href}
+                      className="text-stone hover:text-ink transition-colors duration-300"
+                    >
+                      {link.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
 
         {/* 구분선 */}
-        <div className="border-t border-gray-800 pt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="border-t border-cloud pt-8">
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
             {/* 저작권 */}
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-mist">
               © {new Date().getFullYear()} Roomy. All rights reserved.
             </p>
 
             {/* 사업자 정보 */}
-            <div className="text-sm text-gray-400 text-center md:text-right">
-              <p>주식회사 루미 | 대표: 홍길동</p>
-              <p>사업자등록번호: 123-45-67890 | 통신판매업신고: 제2024-서울강남-01234호</p>
+            <div className="text-xs text-mist space-y-1 lg:text-right">
+              <p>주식회사 루미 | 대표: 홍길동 | 사업자등록번호: 123-45-67890</p>
               <p>서울특별시 강남구 테헤란로 123, 4층 | 대표전화: 02-1234-5678</p>
             </div>
           </div>
