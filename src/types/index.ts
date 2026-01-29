@@ -43,3 +43,6 @@ export * from './ai-generate';
 
 // 공유 통계 타입 (P5-T5.5)
 export * from './share';
+
+// Upsell 타입 (P8-R3, P8-R4)
+export * from './upsell';

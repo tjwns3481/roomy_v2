@@ -79,7 +79,31 @@ export const TOAST_MESSAGES = {
   PLAN_UPGRADE_REQUIRED: '프리미엄 플랜으로 업그레이드가 필요합니다',
   PLAN_LIMIT_WARNING: (current: number, limit: number) =>
     `${current}/${limit}개 사용 중입니다. 곧 제한에 도달합니다.`,
+
+  // === Upsell 관련 ===
+  UPSELL_REQUEST_SUCCESS: '요청이 완료되었습니다',
+  UPSELL_REQUEST_ERROR: '요청 중 오류가 발생했습니다',
+  UPSELL_REQUEST_LOADING: '요청 전송 중...',
 } as const;
+
+/**
+ * 토스트 메시지 객체 (하위 호환성을 위해 추가)
+ */
+export const toastMessages = {
+  upsell: {
+    requestSuccess: TOAST_MESSAGES.UPSELL_REQUEST_SUCCESS,
+    requestError: TOAST_MESSAGES.UPSELL_REQUEST_ERROR,
+    requestLoading: TOAST_MESSAGES.UPSELL_REQUEST_LOADING,
+  },
+  guidebook: {
+    createSuccess: TOAST_MESSAGES.GUIDEBOOK_CREATE_SUCCESS,
+    createError: TOAST_MESSAGES.GUIDEBOOK_CREATE_ERROR,
+  },
+  save: {
+    success: TOAST_MESSAGES.SAVE_SUCCESS,
+    error: TOAST_MESSAGES.SAVE_ERROR,
+  },
+};
 
 /**
  * 특정 액션별 토스트 메시지 생성기

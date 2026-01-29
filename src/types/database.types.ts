@@ -1235,6 +1235,67 @@ export interface Database {
         };
         Relationships: [];
       };
+      // @TASK P8-R5 - 알림톡 발송 로그 테이블
+      alimtalk_logs: {
+        Row: {
+          id: string;
+          guidebook_id: string;
+          user_id: string;
+          template_code: string;
+          recipient_phone: string;
+          recipient_name: string | null;
+          status: 'pending' | 'sent' | 'delivered' | 'failed';
+          sent_at: string | null;
+          delivered_at: string | null;
+          error_message: string | null;
+          error_code: string | null;
+          message_content: string | null;
+          kakao_message_id: string | null;
+          template_params: Json | null;
+          cost_krw: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          guidebook_id: string;
+          user_id: string;
+          template_code: string;
+          recipient_phone: string;
+          recipient_name?: string | null;
+          status?: 'pending' | 'sent' | 'delivered' | 'failed';
+          sent_at?: string | null;
+          delivered_at?: string | null;
+          error_message?: string | null;
+          error_code?: string | null;
+          message_content?: string | null;
+          kakao_message_id?: string | null;
+          template_params?: Json | null;
+          cost_krw?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          guidebook_id?: string;
+          user_id?: string;
+          template_code?: string;
+          recipient_phone?: string;
+          recipient_name?: string | null;
+          status?: 'pending' | 'sent' | 'delivered' | 'failed';
+          sent_at?: string | null;
+          delivered_at?: string | null;
+          error_message?: string | null;
+          error_code?: string | null;
+          message_content?: string | null;
+          kakao_message_id?: string | null;
+          template_params?: Json | null;
+          cost_krw?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       // @TASK P6-T6.1 - 결제 내역 테이블
       payment_history: {
         Row: {
@@ -1603,6 +1664,27 @@ export interface Database {
           link_copies: number;
           qr_downloads: number;
           social_shares: number;
+        }[];
+      };
+      // @TASK P8-R5 - 알림톡 RPC 함수
+      get_alimtalk_count_for_guidebook: {
+        Args: {
+          p_guidebook_id: string;
+          p_start_date?: string | null;
+          p_end_date?: string | null;
+        };
+        Returns: number;
+      };
+      get_alimtalk_stats_for_user: {
+        Args: {
+          p_user_id: string;
+        };
+        Returns: {
+          total_sent: number;
+          total_delivered: number;
+          total_failed: number;
+          total_cost_krw: number;
+          last_sent_at: string | null;
         }[];
       };
     };
