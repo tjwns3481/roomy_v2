@@ -1,20 +1,28 @@
 // @TASK P8-R1 - chatbot 질문/답변 API
+// @TASK P8-R6 - AI Chatbot RAG 통합
 // @SPEC specs/domain/resources.yaml#chatbot_log
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createAdminClient } from '@/lib/supabase/server';
+import { createAdminClient, createServerClient } from '@/lib/supabase/server';
 import { ChatbotMessageRequest, ChatbotMessageResponse } from '@/types/chatbot';
+import {
+  generateChatbotResponse,
+  checkChatbotLimit,
+  hasOpenAIKey,
+} from '@/lib/ai/chatbot';
 
 export const dynamic = 'force-dynamic';
 
 /**
  * POST /api/chatbot
  *
- * AI 챗봇 질문/답변을 저장합니다.
- * 인증 불필요 (게스트 접근 허용)
+ * AI 챗봇 질문/답변 (RAG 기반)
+ * - 가이드북 콘텐츠 기반으로 답변 생성
+ * - 플랜별 사용량 제한 (Free: 50회/월, Pro: 500회/월, Business: 무제한)
+ * - 인증 불필요 (게스트 접근 허용)
  *
  * @param request - NextRequest
- * @returns { id, answer, created_at }
+ * @returns { id, answer, sources, created_at }
  */
 export async function POST(request: NextRequest) {
   try {
@@ -56,7 +64,7 @@ export async function POST(request: NextRequest) {
     // 1. 가이드북 존재 여부 확인
     const { data: guidebook, error: guidebookError } = await supabase
       .from('guidebooks')
-      .select('id, status')
+      .select('id, status, user_id')
       .eq('id', guidebook_id)
       .single();
 
@@ -85,11 +93,47 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 3. AI 답변 생성 (임시: 실제 AI 연동은 P8-R6에서 구현)
-    // TODO: OpenAI API 연동
-    const answer = `안녕하세요! "${question}" 질문에 대한 답변입니다. 현재는 테스트 답변이며, 향후 실제 AI 모델로 교체됩니다.`;
+    // 3. 플랜별 사용량 제한 체크 (가이드북 소유자 기준)
+    const limitInfo = await checkChatbotLimit(guidebook.user_id);
+    if (!limitInfo.canChat) {
+      return NextResponse.json(
+        {
+          error: {
+            code: 'LIMIT_EXCEEDED',
+            message: '이번 달 챗봇 사용 한도를 초과했습니다.',
+            details: `Used: ${limitInfo.usedThisMonth}/${limitInfo.limitThisMonth}`,
+          },
+        },
+        { status: 429 }
+      );
+    }
 
-    // 4. 챗봇 로그 삽입
+    // 4. AI 답변 생성 (RAG)
+    let answer: string;
+    let sources: string[] = [];
+
+    try {
+      const aiResponse = await generateChatbotResponse({
+        guidebookId: guidebook_id,
+        sessionId: session_id,
+        question,
+      });
+
+      answer = aiResponse.answer;
+      sources = aiResponse.sources;
+    } catch (aiError) {
+      console.error('[Chatbot] AI generation error:', aiError);
+
+      // AI 실패 시 폴백 응답
+      if (!hasOpenAIKey()) {
+        answer = `안녕하세요! "${question}" 질문에 대한 답변입니다.\n\nAI 서비스가 현재 설정되지 않았습니다. 호스트에게 직접 문의해 주세요.`;
+      } else {
+        answer = `죄송합니다. 일시적인 오류로 답변을 생성할 수 없습니다. 잠시 후 다시 시도해 주세요.`;
+      }
+      sources = [];
+    }
+
+    // 5. 챗봇 로그 삽입
     const { data: log, error: insertError } = await supabase
       .from('chatbot_logs')
       .insert({
@@ -114,11 +158,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 5. 응답
-    const response: ChatbotMessageResponse = {
+    // 6. 응답 (sources 추가)
+    const response: ChatbotMessageResponse & { sources?: string[] } = {
       id: log.id,
       answer: log.answer,
       created_at: log.created_at,
+      sources: sources.length > 0 ? sources : undefined,
     };
 
     return NextResponse.json(response, { status: 201 });

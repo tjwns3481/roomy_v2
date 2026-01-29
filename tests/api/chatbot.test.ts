@@ -58,7 +58,7 @@ describe('Chatbot API', () => {
   });
 
   describe('POST /api/chatbot', () => {
-    it('챗봇 질문/답변을 저장해야 함', async () => {
+    it('챗봇 질문/답변을 저장해야 함 (RAG 기반)', async () => {
       const response = await fetch('http://localhost:3000/api/chatbot', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -75,7 +75,12 @@ describe('Chatbot API', () => {
       expect(data).toHaveProperty('id');
       expect(data).toHaveProperty('answer');
       expect(data).toHaveProperty('created_at');
-      expect(data.answer).toContain('체크인 시간이 언제인가요?');
+      expect(data.answer).toBeTruthy();
+
+      // RAG 응답은 sources를 포함할 수 있음 (OpenAI API 키가 있을 때)
+      if (data.sources) {
+        expect(Array.isArray(data.sources)).toBe(true);
+      }
 
       testLogId = data.id;
     });

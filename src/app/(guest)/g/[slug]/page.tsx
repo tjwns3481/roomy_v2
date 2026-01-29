@@ -1,8 +1,5 @@
-// @TASK P2-T2.1 - 게스트 가이드북 뷰어 페이지
-// @TASK P2-T2.7 - 조회수 추적 연동
-// @TASK P7-T7.4 - 동적 메타데이터 및 JSON-LD 추가
-// @TASK P7-T7.8 - API 캐싱 최적화
-// @SPEC docs/planning/03-user-flow.md#게스트-가이드북-조회
+// @TASK P8-S2-T1 - AirBnB 스타일 게스트 뷰어 페이지
+// @SPEC specs/screens/guest-viewer.yaml
 
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
@@ -13,8 +10,6 @@ import { ViewTracker } from '@/components/guest/ViewTracker';
 import { BlockList } from '@/components/guest/BlockRenderer';
 import { GuidebookJsonLd, BreadcrumbJsonLd } from '@/components/seo';
 
-// @TASK P7-T7.8 - API 캐싱 설정 (1시간 캐싱)
-// 가이드북 내용은 자주 변경되지 않으므로 1시간 캐싱 적용
 export const revalidate = 3600; // 1시간
 
 interface PageProps {
@@ -78,7 +73,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 /**
- * 게스트 가이드북 페이지
+ * AirBnB 스타일 게스트 가이드북 페이지
+ * - 풀스크린 히어로
+ * - 부드러운 곡선 & 그림자
+ * - 모바일 최적화
  */
 export default async function GuestGuidePage({ params }: PageProps) {
   const { slug } = await params;
@@ -97,7 +95,7 @@ export default async function GuestGuidePage({ params }: PageProps) {
     notFound();
   }
 
-  // 3. 블록 조회 (DB는 guideId, order 컬럼 사용 - 기존 Prisma 스키마)
+  // 3. 블록 조회
   const { data: blocksData } = await supabase
     .from('blocks')
     .select('*')
@@ -131,16 +129,12 @@ export default async function GuestGuidePage({ params }: PageProps) {
     }))
     .sort((a: any, b: any) => a.order_index - b.order_index);
 
-  // 6. 조회수 증가는 클라이언트 컴포넌트(ViewTracker)에서 처리
-  // - 세션당 1회만 증가 (중복 방지)
-  // - API 호출로 처리하여 더 정확한 통계 수집
-
-  // 7. 존재하는 블록 타입 추출 (BottomNav에 전달)
+  // 6. 존재하는 블록 타입 추출
   const availableBlockTypes: BlockType[] = sortedBlocks.map(
     (block: any) => block.type as BlockType
   );
 
-  // 8. JSON-LD 데이터 준비
+  // 7. JSON-LD 데이터 준비
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://roomy.co.kr';
   const guidebookUrl = `${baseUrl}/g/${slug}`;
 
@@ -162,7 +156,8 @@ export default async function GuestGuidePage({ params }: PageProps) {
         ]}
       />
 
-      <div className="min-h-screen bg-white pb-20 md:pb-0">
+      {/* AirBnB 스타일 레이아웃 */}
+      <div className="min-h-screen bg-surface pb-20 md:pb-0">
         {/* 조회수 추적 */}
         <ViewTracker guidebookId={guidebook.id} />
 
@@ -171,35 +166,42 @@ export default async function GuestGuidePage({ params }: PageProps) {
 
         {/* Hero 블록이 없을 때만 헤더 표시 */}
         {!sortedBlocks.some((b: any) => b.type === 'hero') && (
-          <header id="header" className="border-b">
-            <div className="max-w-4xl mx-auto px-4 py-4">
-              <h1 className="text-2xl font-bold text-gray-900">{guidebook.title}</h1>
+          <header id="header" className="bg-white border-b border-border">
+            <div className="max-w-4xl mx-auto px-4 py-6">
+              <h1 className="text-h1 text-text-primary">{guidebook.title}</h1>
               {guidebook.description && (
-                <p className="text-gray-600 mt-1">{guidebook.description}</p>
+                <p className="text-body text-text-secondary mt-2">
+                  {guidebook.description}
+                </p>
               )}
             </div>
           </header>
         )}
 
-        {/* Main Content - 블록 렌더러 사용 */}
+        {/* Main Content - 블록 렌더러 */}
         <main className="max-w-4xl mx-auto">
           <BlockList blocks={sortedBlocks} />
 
-          {/* Contact Section (문의 섹션) */}
+          {/* Contact Section */}
           <section id="contact" className="mt-8 scroll-mt-20 px-4 pb-8">
-            <div className="p-6 border rounded-lg bg-gray-50">
-              <h2 className="text-lg font-semibold mb-2">문의하기</h2>
-              <p className="text-gray-600 text-sm">
+            <div className="bg-white border border-border rounded-xl p-6 shadow-airbnb-sm">
+              <h2 className="text-h3 font-semibold text-text-primary mb-2">
+                문의하기
+              </h2>
+              <p className="text-body text-text-secondary">
                 궁금한 점이 있으시면 호스트에게 문의하세요.
               </p>
             </div>
           </section>
         </main>
 
-        {/* Footer */}
-        <footer className="border-t mt-12 py-6">
-          <div className="max-w-4xl mx-auto px-4 text-center text-sm text-gray-500">
-            Powered by <span className="font-semibold">Roomy</span>
+        {/* Footer - AirBnB 스타일 */}
+        <footer className="border-t border-border mt-12 py-8 bg-white">
+          <div className="max-w-4xl mx-auto px-4 text-center">
+            <p className="text-body-sm text-text-secondary">
+              Powered by{' '}
+              <span className="font-semibold text-text-primary">Roomy</span>
+            </p>
           </div>
         </footer>
 

@@ -35,6 +35,7 @@ export interface ChatbotMessageResponse {
   id: string;
   answer: string;
   created_at: string;
+  sources?: string[]; // @TASK P8-R6 - RAG 답변에 사용된 블록 제목
 }
 
 /**

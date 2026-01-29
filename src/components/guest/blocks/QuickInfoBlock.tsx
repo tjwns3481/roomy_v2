@@ -1,11 +1,10 @@
-// @TASK P2-T2.3 - QuickInfo 카드 UI (복사 버튼 포함)
-// @SPEC docs/planning/06-tasks.md#P2-T2.3
+// @TASK P8-S2-T1 - AirBnB 스타일 QuickInfoBlock
+// @SPEC specs/screens/guest-viewer.yaml
 
 'use client';
 
 import React, { useState } from 'react';
 import { QuickInfoContent } from '@/types/block';
-import { Card, CardContent } from '@/components/ui/card';
 import { Clock, Wifi, Lock, MapPin, Copy, Eye, EyeOff, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCopyToClipboard } from '@/hooks/useCopyToClipboard';
@@ -15,11 +14,11 @@ interface QuickInfoBlockProps {
 }
 
 /**
- * 게스트용 빠른 정보 블록
- * - 체크인/아웃, 와이파이, 도어락, 주소 표시
- * - 복사 버튼 기능 (useCopyToClipboard 훅 사용)
- * - 비밀번호 토글 기능
- * - 토스트 알림 (복사 성공)
+ * AirBnB 스타일 빠른 정보 블록
+ * - 깔끔한 카드 스타일 (shadow-airbnb-sm)
+ * - 부드러운 곡선 (rounded-xl, rounded-2xl)
+ * - 복사 버튼 & 토글 기능
+ * - 터치 친화적 버튼 (min-h-[44px])
  */
 export function QuickInfoBlock({ content }: QuickInfoBlockProps) {
   const [wifiPasswordVisible, setWifiPasswordVisible] = useState(false);
@@ -27,7 +26,6 @@ export function QuickInfoBlock({ content }: QuickInfoBlockProps) {
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const { copy } = useCopyToClipboard();
 
-  // 클립보드 복사 (토스트 알림 포함)
   const copyToClipboard = async (text: string, field: string) => {
     await copy(text);
     setCopiedField(field);
@@ -35,208 +33,204 @@ export function QuickInfoBlock({ content }: QuickInfoBlockProps) {
   };
 
   return (
-    <div className="space-y-3 px-4 py-6">
+    <div className="px-4 py-8 space-y-4 -mt-4">
       {/* 체크인/체크아웃 */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
-                <Clock className="h-6 w-6 text-blue-600" />
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground">체크인</p>
-                <p className="text-lg font-semibold">{content.checkIn}</p>
-              </div>
+      <div className="bg-white border border-border rounded-xl p-6 shadow-airbnb-sm hover:shadow-airbnb-md transition-shadow">
+        <div className="grid grid-cols-2 gap-6">
+          <div className="flex items-center gap-4">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10">
+              <Clock className="h-7 w-7 text-primary" />
             </div>
-            <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
-                <Clock className="h-6 w-6 text-blue-600" />
-              </div>
-              <div>
-                <p className="text-xs text-muted-foreground">체크아웃</p>
-                <p className="text-lg font-semibold">{content.checkOut}</p>
-              </div>
+            <div>
+              <p className="text-body-sm text-text-secondary mb-1">체크인</p>
+              <p className="text-h3 font-semibold text-text-primary">{content.checkIn}</p>
             </div>
           </div>
-        </CardContent>
-      </Card>
+          <div className="flex items-center gap-4">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10">
+              <Clock className="h-7 w-7 text-primary" />
+            </div>
+            <div>
+              <p className="text-body-sm text-text-secondary mb-1">체크아웃</p>
+              <p className="text-h3 font-semibold text-text-primary">{content.checkOut}</p>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* 와이파이 */}
       {content.wifi && (content.wifi.ssid || content.wifi.password) && (
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-start gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-purple-100">
-                <Wifi className="h-6 w-6 text-purple-600" />
-              </div>
-              <div className="flex-1 space-y-3">
-                <p className="text-sm font-semibold text-muted-foreground">와이파이</p>
+        <div className="bg-white border border-border rounded-xl p-6 shadow-airbnb-sm hover:shadow-airbnb-md transition-shadow">
+          <div className="flex items-start gap-4">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-secondary/10">
+              <Wifi className="h-7 w-7 text-secondary" />
+            </div>
+            <div className="flex-1 space-y-3">
+              <p className="text-h4 font-semibold text-text-primary">와이파이</p>
 
-                {/* SSID */}
-                {content.wifi.ssid && (
-                  <div className="flex items-center justify-between bg-muted/50 rounded-lg p-3">
-                    <div>
-                      <p className="text-xs text-muted-foreground">네트워크</p>
-                      <p className="text-base font-semibold mt-0.5">{content.wifi.ssid}</p>
-                    </div>
+              {/* SSID */}
+              {content.wifi.ssid && (
+                <div className="flex items-center justify-between bg-surface rounded-xl p-4">
+                  <div className="flex-1">
+                    <p className="text-body-sm text-text-secondary mb-1">네트워크</p>
+                    <p className="text-body font-semibold text-text-primary">{content.wifi.ssid}</p>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => copyToClipboard(content.wifi!.ssid, 'wifi-ssid')}
+                    className="flex-shrink-0 min-h-[44px] min-w-[44px]"
+                    aria-label="WiFi 네트워크 이름 복사"
+                  >
+                    {copiedField === 'wifi-ssid' ? (
+                      <Check className="h-5 w-5 text-success" />
+                    ) : (
+                      <Copy className="h-5 w-5 text-text-secondary" />
+                    )}
+                  </Button>
+                </div>
+              )}
+
+              {/* 비밀번호 */}
+              {content.wifi.password && (
+                <div className="flex items-center justify-between bg-surface rounded-xl p-4">
+                  <div className="flex-1">
+                    <p className="text-body-sm text-text-secondary mb-1">비밀번호</p>
+                    <p className="text-body font-mono text-text-primary">
+                      {wifiPasswordVisible ? content.wifi.password : '•'.repeat(12)}
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => copyToClipboard(content.wifi!.ssid, 'wifi-ssid')}
-                      className="flex-shrink-0"
-                      aria-label="WiFi 네트워크 이름 복사"
+                      onClick={() => setWifiPasswordVisible(!wifiPasswordVisible)}
+                      className="min-h-[44px] min-w-[44px]"
+                      aria-label={wifiPasswordVisible ? 'WiFi 비밀번호 숨기기' : 'WiFi 비밀번호 표시'}
                     >
-                      {copiedField === 'wifi-ssid' ? (
-                        <Check className="h-4 w-4 text-green-600" />
+                      {wifiPasswordVisible ? (
+                        <EyeOff className="h-5 w-5 text-text-secondary" />
                       ) : (
-                        <Copy className="h-4 w-4" />
+                        <Eye className="h-5 w-5 text-text-secondary" />
+                      )}
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => copyToClipboard(content.wifi!.password, 'wifi-password')}
+                      className="min-h-[44px] min-w-[44px]"
+                      aria-label="WiFi 비밀번호 복사"
+                    >
+                      {copiedField === 'wifi-password' ? (
+                        <Check className="h-5 w-5 text-success" />
+                      ) : (
+                        <Copy className="h-5 w-5 text-text-secondary" />
                       )}
                     </Button>
                   </div>
-                )}
-
-                {/* 비밀번호 */}
-                {content.wifi.password && (
-                  <div className="flex items-center justify-between bg-muted/50 rounded-lg p-3">
-                    <div className="flex-1">
-                      <p className="text-xs text-muted-foreground">비밀번호</p>
-                      <p className="text-base font-mono mt-0.5">
-                        {wifiPasswordVisible ? content.wifi.password : '•'.repeat(12)}
-                      </p>
-                    </div>
-                    <div className="flex gap-1">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setWifiPasswordVisible(!wifiPasswordVisible)}
-                        aria-label={wifiPasswordVisible ? 'WiFi 비밀번호 숨기기' : 'WiFi 비밀번호 표시'}
-                      >
-                        {wifiPasswordVisible ? (
-                          <EyeOff className="h-4 w-4" />
-                        ) : (
-                          <Eye className="h-4 w-4" />
-                        )}
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => copyToClipboard(content.wifi!.password, 'wifi-password')}
-                        aria-label="WiFi 비밀번호 복사"
-                      >
-                        {copiedField === 'wifi-password' ? (
-                          <Check className="h-4 w-4 text-green-600" />
-                        ) : (
-                          <Copy className="h-4 w-4" />
-                        )}
-                      </Button>
-                    </div>
-                  </div>
-                )}
-              </div>
+                </div>
+              )}
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
 
       {/* 도어락 */}
       {content.doorLock && (content.doorLock.password || content.doorLock.instructions) && (
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-start gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
-                <Lock className="h-6 w-6 text-green-600" />
-              </div>
-              <div className="flex-1 space-y-3">
-                <p className="text-sm font-semibold text-muted-foreground">도어락</p>
+        <div className="bg-white border border-border rounded-xl p-6 shadow-airbnb-sm hover:shadow-airbnb-md transition-shadow">
+          <div className="flex items-start gap-4">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-accent/10">
+              <Lock className="h-7 w-7 text-accent" />
+            </div>
+            <div className="flex-1 space-y-3">
+              <p className="text-h4 font-semibold text-text-primary">도어락</p>
 
-                {/* 비밀번호 */}
-                {content.doorLock.password && (
-                  <div className="flex items-center justify-between bg-muted/50 rounded-lg p-3">
-                    <div className="flex-1">
-                      <p className="text-xs text-muted-foreground">비밀번호</p>
-                      <p className="text-lg font-mono font-semibold mt-0.5">
-                        {doorLockVisible ? content.doorLock.password : '•'.repeat(content.doorLock.password.length)}
-                      </p>
-                    </div>
-                    <div className="flex gap-1">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setDoorLockVisible(!doorLockVisible)}
-                        aria-label={doorLockVisible ? '도어락 비밀번호 숨기기' : '도어락 비밀번호 표시'}
-                      >
-                        {doorLockVisible ? (
-                          <EyeOff className="h-4 w-4" />
-                        ) : (
-                          <Eye className="h-4 w-4" />
-                        )}
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => copyToClipboard(content.doorLock!.password, 'doorlock')}
-                        aria-label="도어락 비밀번호 복사"
-                      >
-                        {copiedField === 'doorlock' ? (
-                          <Check className="h-4 w-4 text-green-600" />
-                        ) : (
-                          <Copy className="h-4 w-4" />
-                        )}
-                      </Button>
-                    </div>
-                  </div>
-                )}
-
-                {/* 사용 방법 */}
-                {content.doorLock.instructions && (
-                  <div className="bg-muted/50 rounded-lg p-3">
-                    <p className="text-xs text-muted-foreground mb-1">사용 방법</p>
-                    <p className="text-sm leading-relaxed whitespace-pre-wrap">
-                      {content.doorLock.instructions}
+              {/* 비밀번호 */}
+              {content.doorLock.password && (
+                <div className="flex items-center justify-between bg-surface rounded-xl p-4">
+                  <div className="flex-1">
+                    <p className="text-body-sm text-text-secondary mb-1">비밀번호</p>
+                    <p className="text-h3 font-mono font-bold text-text-primary">
+                      {doorLockVisible ? content.doorLock.password : '•'.repeat(content.doorLock.password.length)}
                     </p>
                   </div>
-                )}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+                  <div className="flex gap-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setDoorLockVisible(!doorLockVisible)}
+                      className="min-h-[44px] min-w-[44px]"
+                      aria-label={doorLockVisible ? '도어락 비밀번호 숨기기' : '도어락 비밀번호 표시'}
+                    >
+                      {doorLockVisible ? (
+                        <EyeOff className="h-5 w-5 text-text-secondary" />
+                      ) : (
+                        <Eye className="h-5 w-5 text-text-secondary" />
+                      )}
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => copyToClipboard(content.doorLock!.password, 'doorlock')}
+                      className="min-h-[44px] min-w-[44px]"
+                      aria-label="도어락 비밀번호 복사"
+                    >
+                      {copiedField === 'doorlock' ? (
+                        <Check className="h-5 w-5 text-success" />
+                      ) : (
+                        <Copy className="h-5 w-5 text-text-secondary" />
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              )}
 
-      {/* 주소 */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="flex items-start gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
-              <MapPin className="h-6 w-6 text-red-600" />
-            </div>
-            <div className="flex-1">
-              <p className="text-sm font-semibold text-muted-foreground mb-2">주소</p>
-              <div className="flex items-start justify-between gap-2 bg-muted/50 rounded-lg p-3">
-                <p className="text-base leading-relaxed flex-1">{content.address}</p>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => copyToClipboard(content.address, 'address')}
-                  className="flex-shrink-0"
-                  aria-label="주소 복사"
-                >
-                  {copiedField === 'address' ? (
-                    <Check className="h-4 w-4 text-green-600" />
-                  ) : (
-                    <Copy className="h-4 w-4" />
-                  )}
-                </Button>
-              </div>
-              {content.coordinates && (
-                <p className="mt-2 text-xs text-muted-foreground">
-                  좌표: {content.coordinates.lat.toFixed(6)}, {content.coordinates.lng.toFixed(6)}
-                </p>
+              {/* 사용 방법 */}
+              {content.doorLock.instructions && (
+                <div className="bg-surface rounded-xl p-4">
+                  <p className="text-body-sm text-text-secondary mb-2">사용 방법</p>
+                  <p className="text-body text-text-primary leading-relaxed whitespace-pre-wrap">
+                    {content.doorLock.instructions}
+                  </p>
+                </div>
               )}
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      )}
+
+      {/* 주소 */}
+      <div className="bg-white border border-border rounded-xl p-6 shadow-airbnb-sm hover:shadow-airbnb-md transition-shadow">
+        <div className="flex items-start gap-4">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-error/10">
+            <MapPin className="h-7 w-7 text-error" />
+          </div>
+          <div className="flex-1">
+            <p className="text-h4 font-semibold text-text-primary mb-3">주소</p>
+            <div className="flex items-start justify-between gap-3 bg-surface rounded-xl p-4">
+              <p className="text-body text-text-primary leading-relaxed flex-1">{content.address}</p>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => copyToClipboard(content.address, 'address')}
+                className="flex-shrink-0 min-h-[44px] min-w-[44px]"
+                aria-label="주소 복사"
+              >
+                {copiedField === 'address' ? (
+                  <Check className="h-5 w-5 text-success" />
+                ) : (
+                  <Copy className="h-5 w-5 text-text-secondary" />
+                )}
+              </Button>
+            </div>
+            {content.coordinates && (
+              <p className="mt-3 text-body-sm text-text-tertiary">
+                좌표: {content.coordinates.lat.toFixed(6)}, {content.coordinates.lng.toFixed(6)}
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

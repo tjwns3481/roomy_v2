@@ -1,5 +1,6 @@
 // @TASK P1-T1.1 - 에디터 레이아웃 (3단: TOC + Editor + Preview)
 // @TASK Editor-Fix - 블록 에디터 통합
+// @TASK P8-S9-T1 - 에디터 미리보기 개선
 
 'use client';
 
@@ -28,6 +29,7 @@ import {
 } from '@/components/ui/dialog';
 import { useEditor, EditorBlock } from '@/hooks/useEditor';
 import { BlockType, BlockContent } from '@/types/block';
+import { PreviewPanel } from './PreviewPanel';
 
 // Block Editors
 import { HeroEditor } from './blocks/HeroEditor';
@@ -413,52 +415,15 @@ export function EditorLayout({ guidebookId }: EditorLayoutProps) {
         <aside
           data-testid="preview-panel"
           className={cn(
-            'bg-gray-100 overflow-y-auto flex items-start justify-center p-4',
-            activeTab === 'editor' && 'hidden lg:flex'
+            'bg-gray-100 overflow-hidden',
+            activeTab === 'editor' && 'hidden lg:block'
           )}
         >
-          {/* iPhone 프레임 */}
-          <div
-            className={cn(
-              'iphone-frame',
-              'w-full max-w-[375px]',
-              'bg-white rounded-[40px] shadow-xl',
-              'border-[12px] border-black',
-              'relative',
-              'overflow-hidden'
-            )}
-          >
-            {/* 노치 */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-6 bg-black rounded-b-3xl z-10" />
-
-            {/* 스크린 */}
-            <div className="h-[667px] overflow-y-auto bg-gray-50">
-              <div className="p-4 space-y-4">
-                {blocks.map((block) => (
-                  <div
-                    key={block.id}
-                    className={cn(
-                      'bg-white rounded-lg p-4 shadow-sm transition-all',
-                      selectedBlockId === block.id && 'ring-2 ring-primary'
-                    )}
-                    onClick={() => setSelectedBlockId(block.id)}
-                  >
-                    <div className="font-semibold">
-                      {(block.content as any).title ||
-                        (block.content as any).networkName ||
-                        getBlockLabel(block.type)}
-                    </div>
-                    <div className="text-xs text-gray-500 mt-1">
-                      {getBlockLabel(block.type)}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* 홈 인디케이터 */}
-            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-32 h-1 bg-gray-400 rounded-full" />
-          </div>
+          <PreviewPanel
+            blocks={blocks}
+            selectedBlockId={selectedBlockId}
+            onBlockSelect={setSelectedBlockId}
+          />
         </aside>
       </div>
 
