@@ -1,11 +1,11 @@
-// @TASK P7-T7.6 - 로딩 스피너 컴포넌트
+// @TASK DR-P5 - Coral 테마 로딩 스피너 컴포넌트
 // @SPEC docs/planning/06-tasks.md#P7-T7.6
 
 import { cn } from '@/lib/utils';
 
 interface LoadingSpinnerProps {
   size?: 'sm' | 'md' | 'lg';
-  variant?: 'default' | 'primary' | 'white';
+  variant?: 'default' | 'coral' | 'white';
   className?: string;
 }
 
@@ -16,14 +16,14 @@ const sizeClasses = {
 };
 
 const variantClasses = {
-  default: 'border-gray-300 border-t-gray-900',
-  primary: 'border-primary/30 border-t-primary',
+  default: 'border-muted border-t-text-primary',
+  coral: 'border-coral-light border-t-coral',
   white: 'border-white/30 border-t-white',
 };
 
 export function LoadingSpinner({
   size = 'md',
-  variant = 'default',
+  variant = 'coral',
   className,
 }: LoadingSpinnerProps) {
   return (

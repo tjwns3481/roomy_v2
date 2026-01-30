@@ -1,4 +1,4 @@
-// @TASK P7-T7.6 - 전체 화면 로딩 오버레이
+// @TASK DR-P5 - Coral 테마 전체 화면 로딩 오버레이
 // @SPEC docs/planning/06-tasks.md#P7-T7.6
 
 import { LoadingSpinner } from './loading-spinner';
@@ -16,16 +16,16 @@ export function LoadingOverlay({
   return (
     <div
       className={cn(
-        'fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm',
+        'fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/90 backdrop-blur-sm',
         className
       )}
       role="dialog"
       aria-modal="true"
       aria-label="로딩 중"
     >
-      <LoadingSpinner size="lg" variant="primary" />
+      <LoadingSpinner size="lg" variant="coral" />
       {message && (
-        <p className="mt-4 text-sm text-gray-600 font-medium">{message}</p>
+        <p className="mt-4 text-body text-text-secondary font-medium">{message}</p>
       )}
     </div>
   );
