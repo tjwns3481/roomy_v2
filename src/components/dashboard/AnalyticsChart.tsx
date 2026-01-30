@@ -25,7 +25,7 @@ interface Props {
   period: 'daily' | 'weekly' | 'monthly';
 }
 
-function CustomTooltip({ active, payload }: TooltipProps<number, string>) {
+function CustomTooltip({ active, payload }: any) {
   if (active && payload && payload.length) {
     return (
       <div className="bg-background border border-border rounded-lg p-3 shadow-lg">

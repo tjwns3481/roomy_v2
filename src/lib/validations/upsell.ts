@@ -20,10 +20,12 @@ export const createUpsellItemSchema = z.object({
     .url('올바른 URL 형식이어야 합니다')
     .optional(),
   is_active: z.boolean()
+    .optional()
     .default(true),
   sort_order: z.number()
     .int('정렬 순서는 정수여야 합니다')
     .min(0, '정렬 순서는 0 이상이어야 합니다')
+    .optional()
     .default(0),
 });
 
@@ -83,7 +85,7 @@ export const createUpsellRequestSchema = z.object({
  */
 export const updateUpsellRequestSchema = z.object({
   status: z.enum(['pending', 'confirmed', 'cancelled'], {
-    errorMap: () => ({ message: '상태는 pending, confirmed, cancelled 중 하나여야 합니다' }),
+    message: '상태는 pending, confirmed, cancelled 중 하나여야 합니다',
   }),
 });
 

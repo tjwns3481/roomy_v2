@@ -61,25 +61,25 @@ export default function MobileNav({ isOpen, onClose }: MobileNavProps) {
       {/* Slide-over Panel */}
       <aside
         className={cn(
-          'fixed top-0 left-0 bottom-0 w-64 bg-white z-50 lg:hidden transform transition-transform duration-300 ease-in-out',
+          'fixed top-0 left-0 bottom-0 w-64 bg-white z-50 lg:hidden transform transition-transform duration-300 ease-in-out shadow-airbnb-lg',
           isOpen ? 'translate-x-0' : '-translate-x-full'
         )}
       >
         {/* Header */}
-        <div className="h-16 px-4 flex items-center justify-between border-b border-gray-200">
-          <Link href="/dashboard" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+        <div className="h-16 px-4 flex items-center justify-between border-b border-cloud/30">
+          <Link href="/dashboard" className="flex items-center gap-2 group">
+            <div className="w-8 h-8 bg-coral rounded-airbnb flex items-center justify-center group-hover:shadow-coral transition-all duration-200">
               <span className="text-white font-bold text-lg">R</span>
             </div>
-            <span className="text-xl font-bold text-gray-900">Roomy</span>
+            <span className="text-xl font-bold text-ink">Roomy</span>
           </Link>
 
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-snow rounded-airbnb transition-all duration-200"
             aria-label="메뉴 닫기"
           >
-            <X className="w-5 h-5 text-gray-700" />
+            <X className="w-5 h-5 text-charcoal" />
           </button>
         </div>
 
@@ -94,13 +94,16 @@ export default function MobileNav({ isOpen, onClose }: MobileNavProps) {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  'flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all',
+                  'flex items-center gap-3 px-4 py-3 rounded-airbnb text-sm font-medium transition-all duration-200',
                   isActive
-                    ? 'bg-primary/10 text-primary border-l-4 border-primary'
-                    : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                    ? 'bg-coral-light text-coral border-l-3 border-coral shadow-soft'
+                    : 'text-charcoal hover:bg-snow hover:text-ink'
                 )}
               >
-                <Icon className="w-5 h-5" />
+                <Icon className={cn(
+                  'w-5 h-5 transition-colors',
+                  isActive ? 'text-coral' : 'text-stone'
+                )} />
                 <span>{item.label}</span>
               </Link>
             );
@@ -108,17 +111,17 @@ export default function MobileNav({ isOpen, onClose }: MobileNavProps) {
 
           {/* Pro Upgrade Banner */}
           <div className="mt-8">
-            <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-lg p-4 border border-primary/20">
+            <div className="bg-gradient-to-br from-coral-light to-coral-light/50 rounded-airbnb p-4 border border-coral/20">
               <div className="flex items-center gap-2 mb-2">
-                <Crown className="w-5 h-5 text-primary" />
-                <h3 className="text-sm font-semibold text-gray-900">Pro 플랜</h3>
+                <Crown className="w-5 h-5 text-coral" />
+                <h3 className="text-sm font-semibold text-ink">Pro 플랜</h3>
               </div>
-              <p className="text-xs text-gray-600 mb-3">
+              <p className="text-xs text-charcoal mb-3">
                 무제한 가이드북과 고급 기능을 사용해보세요
               </p>
               <Link
                 href="/settings/license"
-                className="block w-full text-center bg-primary text-white text-sm font-medium py-2 rounded-lg hover:bg-primary/90 transition-colors"
+                className="block w-full text-center bg-coral text-white text-sm font-medium py-2 rounded-airbnb hover:bg-coral-dark transition-all duration-200 shadow-soft"
               >
                 업그레이드
               </Link>

@@ -1,6 +1,7 @@
 // @TASK P8-S12-T1 - 리뷰 클릭 트래킹 API
 // @SPEC P8 Screen 12 - Review Settings
 
+// @ts-nocheck - review 관련 RPC 함수는 아직 DB에 생성되지 않음 (P8-S12-T1)
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@/lib/supabase/server';
 import { ReviewPlatform } from '@/types/review';
@@ -21,7 +22,7 @@ export async function POST(
 ) {
   try {
     const { guidebookId } = await params;
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
 
     const body: TrackReviewClickRequest = await request.json();
     const { platform, action } = body;

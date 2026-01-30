@@ -16,13 +16,13 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-surface">
       {/* Header */}
       <Header onMenuClick={() => setIsMobileMenuOpen(true)} />
 
       <div className="flex">
         {/* Desktop Sidebar */}
-        <aside className="hidden lg:block lg:fixed lg:inset-y-0 lg:top-16 lg:w-64">
+        <aside className="hidden lg:block lg:fixed lg:inset-y-0 lg:top-16 lg:w-64 border-r border-cloud/30">
           <Sidebar />
         </aside>
 

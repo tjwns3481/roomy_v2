@@ -42,7 +42,7 @@ export function UpsellCard({ item, onClick }: UpsellCardProps) {
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-surface">
             <svg
-              className="w-16 h-16 text-text-tertiary"
+              className="w-16 h-16 text-tertiary"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"

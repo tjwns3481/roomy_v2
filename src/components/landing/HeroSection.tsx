@@ -11,23 +11,23 @@ import { ArrowRight, Play } from 'lucide-react';
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-screen flex items-center pt-20 overflow-hidden bg-white">
+    <section className="relative min-h-screen flex items-center pt-20 overflow-hidden bg-gradient-to-br from-white via-coral-light/20 to-white">
       {/* 배경 - 미니멀한 도형 */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* 우상단 큰 원 */}
-        <div className="absolute -top-32 -right-32 w-[600px] h-[600px] bg-coral-light rounded-full opacity-60" />
+        <div className="absolute -top-32 -right-32 w-[600px] h-[600px] bg-gradient-to-br from-coral-light to-amber-light rounded-full opacity-40 blur-3xl" />
         {/* 좌하단 작은 원 */}
-        <div className="absolute -bottom-20 -left-20 w-[300px] h-[300px] bg-snow rounded-full" />
+        <div className="absolute -bottom-20 -left-20 w-[400px] h-[400px] bg-gradient-to-tr from-mint-light to-snow rounded-full opacity-60 blur-2xl" />
         {/* 플로팅 도형들 */}
         <motion.div
           animate={{ y: [-10, 10, -10] }}
           transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute top-1/4 right-1/4 w-16 h-16 border-2 border-coral/30 rounded-2xl rotate-12"
+          className="absolute top-1/4 right-1/4 w-16 h-16 border-2 border-coral/30 rounded-2xl rotate-12 will-change-transform"
         />
         <motion.div
           animate={{ y: [10, -10, 10] }}
           transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute bottom-1/3 left-1/4 w-8 h-8 bg-mint/20 rounded-full"
+          className="absolute bottom-1/3 left-1/4 w-8 h-8 bg-mint/20 rounded-full will-change-transform"
         />
       </div>
 
@@ -65,10 +65,10 @@ export function HeroSection() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="mt-8 text-xl text-stone leading-relaxed max-w-lg"
+              className="mt-8 text-lg text-text-secondary leading-relaxed"
+              style={{ maxWidth: '32rem' }}
             >
-              AI가 숙소 정보를 분석하여 모바일 친화적인
-              디지털 가이드북을 자동으로 만들어드립니다.
+              AI가 숙소 정보를 분석하여 모바일 친화적인 디지털 가이드북을 자동으로 만들어드립니다.
             </motion.p>
 
             {/* CTA 버튼 */}
@@ -80,15 +80,17 @@ export function HeroSection() {
             >
               <Link
                 href="/signup"
+                aria-label="무료로 시작하기 - 회원가입 페이지로 이동"
                 className="group inline-flex items-center gap-2 px-8 py-4 bg-coral text-white rounded-full font-semibold
                   shadow-coral hover:shadow-coral-lg hover:bg-coral-dark
-                  transition-all duration-300"
+                  transition-all duration-300 will-change-transform"
               >
                 무료로 시작하기
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
               <Link
                 href="/demo"
+                aria-label="데모 보기 - Roomy 제품 데모 확인"
                 className="group inline-flex items-center gap-2 px-8 py-4 text-ink font-semibold
                   hover:text-coral transition-colors duration-300"
               >
@@ -142,40 +144,41 @@ export function HeroSection() {
             initial={{ opacity: 0, x: 40 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="lg:col-span-5 relative"
+            className="lg:col-span-5 relative will-change-transform"
+            aria-label="Roomy 가이드북 모바일 화면 미리보기"
           >
             {/* 모바일 목업 */}
             <div className="relative mx-auto w-72 lg:w-80">
               {/* 폰 프레임 */}
-              <div className="bg-ink rounded-[3rem] p-3 shadow-soft-lg">
-                <div className="bg-white rounded-[2.5rem] overflow-hidden aspect-[9/19]">
+              <div className="bg-gradient-to-br from-ink to-charcoal rounded-[3rem] p-3 shadow-airbnb">
+                <div className="bg-white rounded-[2.5rem] overflow-hidden aspect-[9/19] shadow-inner">
                   {/* 앱 화면 */}
-                  <div className="w-full h-full bg-gradient-to-b from-coral-light to-white p-6 flex flex-col">
+                  <div className="w-full h-full bg-gradient-to-b from-coral-light/30 via-white to-mint-light/20 p-6 flex flex-col">
                     {/* 헤더 */}
                     <div className="flex items-center justify-between mb-6">
-                      <div className="w-10 h-10 bg-ink rounded-xl flex items-center justify-center">
+                      <div className="w-10 h-10 bg-gradient-to-br from-coral to-coral-dark rounded-xl flex items-center justify-center shadow-coral">
                         <span className="text-white font-bold text-sm">R</span>
                       </div>
                       <div className="flex gap-2">
-                        <div className="w-8 h-8 bg-snow rounded-lg" />
-                        <div className="w-8 h-8 bg-snow rounded-lg" />
+                        <div className="w-8 h-8 bg-snow rounded-lg shadow-soft" />
+                        <div className="w-8 h-8 bg-snow rounded-lg shadow-soft" />
                       </div>
                     </div>
                     {/* 콘텐츠 스켈레톤 */}
                     <div className="flex-1 space-y-4">
-                      <div className="w-3/4 h-4 bg-snow rounded-full" />
-                      <div className="w-1/2 h-4 bg-snow rounded-full" />
-                      <div className="mt-6 aspect-video bg-snow rounded-2xl" />
+                      <div className="w-3/4 h-5 bg-gradient-to-r from-snow to-cloud/50 rounded-full animate-pulse" />
+                      <div className="w-1/2 h-4 bg-gradient-to-r from-snow to-cloud/50 rounded-full animate-pulse" style={{ animationDelay: '0.1s' }} />
+                      <div className="mt-6 aspect-video bg-gradient-to-br from-snow to-cloud/50 rounded-2xl shadow-soft animate-pulse" style={{ animationDelay: '0.2s' }} />
                       <div className="space-y-2 mt-4">
-                        <div className="w-full h-3 bg-snow rounded-full" />
-                        <div className="w-5/6 h-3 bg-snow rounded-full" />
-                        <div className="w-4/6 h-3 bg-snow rounded-full" />
+                        <div className="w-full h-3 bg-gradient-to-r from-snow to-cloud/50 rounded-full animate-pulse" style={{ animationDelay: '0.3s' }} />
+                        <div className="w-5/6 h-3 bg-gradient-to-r from-snow to-cloud/50 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }} />
+                        <div className="w-4/6 h-3 bg-gradient-to-r from-snow to-cloud/50 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }} />
                       </div>
                     </div>
                     {/* 하단 버튼 */}
                     <div className="mt-auto pt-4">
-                      <div className="w-full h-12 bg-coral rounded-full flex items-center justify-center">
-                        <span className="text-white text-sm font-semibold">AI 챗봇</span>
+                      <div className="w-full h-12 bg-gradient-to-r from-coral to-coral-dark rounded-full flex items-center justify-center shadow-coral">
+                        <span className="text-white text-sm font-semibold">AI 챗봇 💬</span>
                       </div>
                     </div>
                   </div>

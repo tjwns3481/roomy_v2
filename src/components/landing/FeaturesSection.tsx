@@ -103,7 +103,7 @@ export function FeaturesSection() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 className={`group bg-white border border-cloud rounded-3xl p-8 lg:p-10
-                  hover:shadow-soft transition-all duration-500
+                  hover:shadow-airbnb-sm hover:-translate-y-1 transition-all duration-500
                   ${colors.border}
                   ${isLarge ? 'lg:col-span-7' : 'lg:col-span-5'}
                   ${index === 1 ? 'lg:col-start-8' : ''}
@@ -117,9 +117,9 @@ export function FeaturesSection() {
 
                 {/* 아이콘 */}
                 <div className={`mt-6 w-14 h-14 ${colors.light} rounded-2xl flex items-center justify-center
-                  group-hover:scale-110 transition-transform duration-300`}
+                  group-hover:scale-110 group-hover:rotate-3 transition-all duration-300`}
                 >
-                  <Icon className={`w-7 h-7 ${colors.text}`} />
+                  <Icon className={`w-7 h-7 ${colors.text} group-hover:scale-110 transition-transform duration-300`} />
                 </div>
 
                 {/* 제목 */}
@@ -133,10 +133,10 @@ export function FeaturesSection() {
                 </p>
 
                 {/* 화살표 */}
-                <div className="mt-6 flex items-center gap-2 text-stone group-hover:text-ink transition-colors">
+                <div className={`mt-6 flex items-center gap-2 text-mist group-hover:${colors.text} transition-colors duration-300`}>
                   <span className="text-sm font-medium">자세히 보기</span>
                   <svg
-                    className="w-4 h-4 group-hover:translate-x-1 transition-transform"
+                    className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"

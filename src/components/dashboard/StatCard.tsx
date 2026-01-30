@@ -43,17 +43,17 @@ export function StatCard({
   return (
     <div
       className={cn(
-        'bg-white rounded-xl p-6',
+        'bg-white rounded-airbnb p-6',
         'shadow-airbnb-sm hover:shadow-airbnb-md',
         'transition-all duration-300',
-        'border border-border',
+        'border border-cloud/30',
         className
       )}
     >
       {/* 아이콘 */}
       <div className="flex items-center justify-between mb-4">
-        <div className="p-3 bg-primary-light rounded-xl">
-          <Icon className="w-6 h-6 text-primary" />
+        <div className="p-3 bg-coral-light rounded-airbnb">
+          <Icon className="w-6 h-6 text-coral" />
         </div>
 
         {/* Trend 표시 */}
@@ -75,15 +75,15 @@ export function StatCard({
       </div>
 
       {/* 제목 */}
-      <h3 className="text-body-sm text-text-secondary font-medium mb-1">
+      <h3 className="text-body-sm text-charcoal font-medium mb-1">
         {title}
       </h3>
 
       {/* 값 */}
-      <p className="text-h2 text-text-primary font-bold mb-1">{value}</p>
+      <p className="text-h2 text-ink font-bold mb-1">{value}</p>
 
       {/* 설명 또는 Trend 라벨 */}
-      <p className="text-body-sm text-text-tertiary">
+      <p className="text-body-sm text-stone">
         {trend ? trend.label : description}
       </p>
     </div>

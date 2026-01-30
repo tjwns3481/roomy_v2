@@ -104,20 +104,27 @@ export async function getGuidebookContext(
   // 2. 블록 콘텐츠 조회
   const { data: blocks, error: blocksError } = await supabase
     .from('blocks')
-    .select('type, title, content, is_visible')
+    .select('type, content, is_visible')
     .eq('guidebook_id', guidebookId)
     .eq('is_visible', true)
-    .order('order', { ascending: true });
+    .order('order_index', { ascending: true });
 
   if (blocksError) {
     console.error('[Chatbot] Error fetching blocks:', blocksError);
     return null;
   }
 
+  // 블록을 title이 있는 형태로 변환
+  const formattedBlocks = (blocks || []).map(block => ({
+    type: block.type,
+    title: (block.content as any)?.title || block.type,
+    content: block.content,
+  }));
+
   return {
     guidebookId,
     guidebookTitle: guidebook.title,
-    blocks: blocks || [],
+    blocks: formattedBlocks,
   };
 }
 
@@ -265,7 +272,7 @@ export async function checkChatbotLimit(userId?: string): Promise<ChatbotLimitIn
 
   // 1. 사용자 플랜 조회
   const { data: user } = await supabase
-    .from('users')
+    .from('profiles')
     .select('plan')
     .eq('id', userId)
     .single();
@@ -278,7 +285,7 @@ export async function checkChatbotLimit(userId?: string): Promise<ChatbotLimitIn
   startOfMonth.setDate(1);
   startOfMonth.setHours(0, 0, 0, 0);
 
-  const { count, error } = await supabase
+  const { count, error } = await (supabase as any)
     .from('chatbot_logs')
     .select('id', { count: 'exact', head: true })
     .gte('created_at', startOfMonth.toISOString());
@@ -317,7 +324,7 @@ export async function recordChatbotUsage(params: {
 }): Promise<string> {
   const supabase = createAdminClient();
 
-  const { data, error } = await supabase
+  const { data, error } = await (supabase as any)
     .from('chatbot_logs')
     .insert({
       guidebook_id: params.guidebookId,

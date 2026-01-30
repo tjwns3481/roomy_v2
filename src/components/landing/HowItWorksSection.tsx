@@ -80,8 +80,16 @@ export function HowItWorksSection() {
 
         {/* 단계 카드 */}
         <div className="relative">
-          {/* 연결선 (데스크톱) */}
-          <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-px bg-cloud -translate-y-1/2 z-0" />
+          {/* 연결선 (데스크톱) - 애니메이션 */}
+          <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-px -translate-y-1/2 z-0 overflow-hidden">
+            <motion.div
+              initial={{ scaleX: 0 }}
+              whileInView={{ scaleX: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1.5, delay: 0.3 }}
+              className="h-full bg-gradient-to-r from-coral via-mint to-amber origin-left"
+            />
+          </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 relative z-10">
             {steps.map((step, index) => {
@@ -98,7 +106,7 @@ export function HowItWorksSection() {
                   className="relative"
                 >
                   {/* 카드 */}
-                  <div className="group bg-white border border-cloud rounded-3xl p-8 lg:p-10 hover:shadow-soft transition-all duration-500">
+                  <div className="group bg-white border border-cloud rounded-3xl p-8 lg:p-10 hover:shadow-airbnb-sm hover:-translate-y-1 transition-all duration-500">
                     {/* 숫자 배지 */}
                     <div className={`absolute -top-5 left-8 w-10 h-10 ${colors.bg} rounded-full flex items-center justify-center shadow-md`}>
                       <span className="text-white font-bold text-sm">
@@ -131,9 +139,15 @@ export function HowItWorksSection() {
 
                   {/* 화살표 (데스크톱) */}
                   {index < steps.length - 1 && (
-                    <div className="hidden lg:flex absolute top-1/2 -right-6 w-12 h-12 bg-white border border-cloud rounded-full items-center justify-center -translate-y-1/2 z-20">
-                      <ArrowRight className="w-5 h-5 text-stone" />
-                    </div>
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      whileInView={{ scale: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.3, delay: 0.5 + index * 0.15 }}
+                      className="hidden lg:flex absolute top-1/2 -right-6 w-12 h-12 bg-white border-2 border-cloud rounded-full items-center justify-center -translate-y-1/2 z-20 shadow-soft"
+                    >
+                      <ArrowRight className={`w-5 h-5 ${colors.text}`} />
+                    </motion.div>
                   )}
 
                   {/* 화살표 (모바일) */}

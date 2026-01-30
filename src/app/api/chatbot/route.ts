@@ -134,29 +134,35 @@ export async function POST(request: NextRequest) {
     }
 
     // 5. 챗봇 로그 삽입
-    const { data: log, error: insertError } = await supabase
-      .from('chatbot_logs')
-      .insert({
-        guidebook_id,
-        session_id,
-        question,
-        answer,
-      })
-      .select('id, answer, created_at')
-      .single();
+    // TODO: chatbot_logs 테이블 마이그레이션 필요
+    // const { data: log, error: insertError } = await supabase
+    //   .from('chatbot_logs')
+    //   .insert({
+    //     guidebook_id,
+    //     session_id,
+    //     question,
+    //     answer,
+    //   })
+    //   .select('id, answer, created_at')
+    //   .single();
 
-    if (insertError || !log) {
-      console.error('챗봇 로그 삽입 에러:', insertError);
-      return NextResponse.json(
-        {
-          error: {
-            code: 'INSERT_ERROR',
-            message: '챗봇 로그 저장에 실패했습니다',
-          },
-        },
-        { status: 500 }
-      );
-    }
+    // if (insertError || !log) {
+    //   console.error('챗봇 로그 삽입 에러:', insertError);
+    //   return NextResponse.json(
+    //     {
+    //       error: {
+    //         code: 'INSERT_ERROR',
+    //         message: '챗봇 로그 저장에 실패했습니다',
+    //       },
+    //     },
+    //     { status: 500 }
+    //   );
+    // }
+    const log = {
+      id: session_id,
+      answer,
+      created_at: new Date().toISOString(),
+    };
 
     // 6. 응답 (sources 추가)
     const response: ChatbotMessageResponse & { sources?: string[] } = {

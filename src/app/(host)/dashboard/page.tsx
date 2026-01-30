@@ -83,15 +83,15 @@ export default function DashboardPage() {
       {/* 헤더 - AirBnB 스타일 */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
         <div>
-          <h1 className="text-display text-text-primary mb-2">환영합니다!</h1>
-          <p className="text-body text-text-secondary">
+          <h1 className="text-h1 text-ink mb-2">환영합니다!</h1>
+          <p className="text-body text-charcoal">
             가이드북 현황과 통계를 확인하세요
           </p>
         </div>
         <Button
           onClick={() => setIsCreateModalOpen(true)}
           size="lg"
-          className="shadow-airbnb-md hover:shadow-airbnb-lg"
+          className="shadow-airbnb-md hover:shadow-airbnb-lg transition-all duration-200"
         >
           <Plus className="w-5 h-5 mr-2" />
           새 가이드북
@@ -99,7 +99,7 @@ export default function DashboardPage() {
       </div>
 
       {/* 통계 카드 그리드 */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <StatCard
           title="총 가이드북"
           value={guidebooks.length.toString()}
@@ -128,10 +128,10 @@ export default function DashboardPage() {
 
       {/* 가이드북 섹션 */}
       <div className="mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-h2 text-text-primary">가이드북</h2>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-h2 text-ink">가이드북</h2>
           {guidebooks.length > 0 && (
-            <span className="text-body-sm text-text-tertiary">
+            <span className="text-body-sm text-stone">
               {guidebooks.length}개
             </span>
           )}
@@ -151,14 +151,14 @@ export default function DashboardPage() {
             ))}
           </div>
         ) : guidebooks.length === 0 ? (
-          <div className="bg-white rounded-2xl shadow-airbnb-sm p-12 text-center">
-            <div className="w-20 h-20 bg-primary-light rounded-full flex items-center justify-center mx-auto mb-6">
-              <BookOpen className="w-10 h-10 text-primary" />
+          <div className="bg-white rounded-airbnb-lg shadow-airbnb-sm p-12 text-center border border-cloud/30">
+            <div className="w-20 h-20 bg-coral-light rounded-full flex items-center justify-center mx-auto mb-6">
+              <BookOpen className="w-10 h-10 text-coral" />
             </div>
-            <h3 className="text-h3 text-text-primary mb-2">
+            <h3 className="text-h3 text-ink mb-2">
               아직 가이드북이 없습니다
             </h3>
-            <p className="text-body text-text-secondary mb-6 max-w-md mx-auto">
+            <p className="text-body text-charcoal mb-6 max-w-md mx-auto">
               첫 가이드북을 만들어 게스트에게 공유해보세요.
               <br />
               몇 분이면 완성됩니다!
@@ -166,7 +166,7 @@ export default function DashboardPage() {
             <Button
               onClick={() => setIsCreateModalOpen(true)}
               size="lg"
-              className="shadow-airbnb-md"
+              className="shadow-airbnb-md hover:shadow-airbnb-lg transition-all duration-200"
             >
               <Plus className="w-5 h-5 mr-2" />
               첫 가이드북 만들기

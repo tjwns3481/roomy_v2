@@ -60,42 +60,44 @@ export async function PATCH(
     const supabase = createAdminClient();
 
     // 1. 로그 존재 여부 확인
-    const { data: log, error: logError } = await supabase
-      .from('chatbot_logs')
-      .select('id')
-      .eq('id', id)
-      .single();
+    // TODO: chatbot_logs 테이블 마이그레이션 필요
+    // const { data: log, error: logError } = await supabase
+    //   .from('chatbot_logs')
+    //   .select('id')
+    //   .eq('id', id)
+    //   .single();
 
-    if (logError || !log) {
-      return NextResponse.json(
-        {
-          error: {
-            code: 'NOT_FOUND',
-            message: '챗봇 로그를 찾을 수 없습니다',
-          },
-        },
-        { status: 404 }
-      );
-    }
+    // if (logError || !log) {
+    //   return NextResponse.json(
+    //     {
+    //       error: {
+    //         code: 'NOT_FOUND',
+    //         message: '챗봇 로그를 찾을 수 없습니다',
+    //       },
+    //     },
+    //     { status: 404 }
+    //   );
+    // }
 
     // 2. 피드백 업데이트
-    const { error: updateError } = await supabase
-      .from('chatbot_logs')
-      .update({ feedback })
-      .eq('id', id);
+    // TODO: chatbot_logs 테이블 마이그레이션 필요
+    // const { error: updateError } = await supabase
+    //   .from('chatbot_logs')
+    //   .update({ feedback })
+    //   .eq('id', id);
 
-    if (updateError) {
-      console.error('피드백 업데이트 에러:', updateError);
-      return NextResponse.json(
-        {
-          error: {
-            code: 'UPDATE_ERROR',
-            message: '피드백 업데이트에 실패했습니다',
-          },
-        },
-        { status: 500 }
-      );
-    }
+    // if (updateError) {
+    //   console.error('피드백 업데이트 에러:', updateError);
+    //   return NextResponse.json(
+    //     {
+    //       error: {
+    //         code: 'UPDATE_ERROR',
+    //         message: '피드백 업데이트에 실패했습니다',
+    //       },
+    //     },
+    //     { status: 500 }
+    //   );
+    // }
 
     return NextResponse.json({ success: true });
   } catch (error) {

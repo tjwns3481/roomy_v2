@@ -41,10 +41,10 @@ export function GuidebookCard({
   return (
     <div
       className={cn(
-        'bg-white rounded-xl overflow-hidden',
-        'shadow-airbnb-sm hover:shadow-airbnb-md',
+        'bg-white rounded-airbnb overflow-hidden',
+        'shadow-airbnb-sm hover:shadow-airbnb-lg',
         'transition-all duration-300',
-        'border border-border',
+        'border border-cloud/30',
         'group cursor-pointer',
         className
       )}
@@ -52,7 +52,7 @@ export function GuidebookCard({
     >
       {/* 썸네일 */}
       <div
-        className="relative h-48 bg-surface overflow-hidden"
+        className="relative h-48 bg-snow overflow-hidden"
         data-testid="thumbnail-container"
       >
         {guidebook.hero_image_url ? (
@@ -63,7 +63,7 @@ export function GuidebookCard({
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
-            <Home className="w-16 h-16 text-text-tertiary" />
+            <Home className="w-16 h-16 text-stone" />
           </div>
         )}
 
@@ -74,17 +74,17 @@ export function GuidebookCard({
       {/* 내용 */}
       <div className="p-5">
         {/* 제목 */}
-        <h3 className="text-h3 text-text-primary font-semibold mb-2 truncate group-hover:text-primary transition-colors">
+        <h3 className="text-h3 text-ink font-semibold mb-2 truncate group-hover:text-coral transition-colors">
           {guidebook.title}
         </h3>
 
         {/* 슬러그 */}
-        <p className="text-body-sm text-text-tertiary mb-3 truncate">
+        <p className="text-body-sm text-stone mb-3 truncate">
           roomy.app/g/{guidebook.slug}
         </p>
 
         {/* 통계 */}
-        <div className="flex items-center gap-4 mb-4 text-body-sm text-text-secondary">
+        <div className="flex items-center gap-4 mb-4 text-body-sm text-charcoal">
           <div className="flex items-center gap-1">
             <Eye className="w-4 h-4" />
             <span>{guidebook.view_count}</span>

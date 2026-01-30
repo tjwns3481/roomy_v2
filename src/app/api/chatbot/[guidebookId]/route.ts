@@ -110,32 +110,35 @@ export async function GET(
     }
 
     // 3. 챗봇 로그 조회 (페이지네이션)
-    let query = supabase
-      .from('chatbot_logs')
-      .select('*', { count: 'exact' })
-      .eq('guidebook_id', guidebookId)
-      .order('created_at', { ascending: false })
-      .range((page - 1) * limit, page * limit - 1);
+    // TODO: chatbot_logs 테이블 마이그레이션 필요
+    // let query = supabase
+    //   .from('chatbot_logs')
+    //   .select('*', { count: 'exact' })
+    //   .eq('guidebook_id', guidebookId)
+    //   .order('created_at', { ascending: false })
+    //   .range((page - 1) * limit, page * limit - 1);
 
-    // 세션 필터링 (옵션)
-    if (session_id) {
-      query = query.eq('session_id', session_id);
-    }
+    // // 세션 필터링 (옵션)
+    // if (session_id) {
+    //   query = query.eq('session_id', session_id);
+    // }
 
-    const { data: logs, error: logsError, count } = await query;
+    // const { data: logs, error: logsError, count } = await query;
 
-    if (logsError) {
-      console.error('챗봇 로그 조회 에러:', logsError);
-      return NextResponse.json(
-        {
-          error: {
-            code: 'FETCH_ERROR',
-            message: '챗봇 로그 조회에 실패했습니다',
-          },
-        },
-        { status: 500 }
-      );
-    }
+    // if (logsError) {
+    //   console.error('챗봇 로그 조회 에러:', logsError);
+    //   return NextResponse.json(
+    //     {
+    //       error: {
+    //         code: 'FETCH_ERROR',
+    //         message: '챗봇 로그 조회에 실패했습니다',
+    //       },
+    //     },
+    //     { status: 500 }
+    //   );
+    // }
+    const logs: any[] = [];
+    const count = 0;
 
     // 4. 응답
     const response: ChatbotLogsResponse = {

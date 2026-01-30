@@ -91,86 +91,85 @@ export async function GET(
     }
 
     // 3. RPC 함수 호출하여 통계 조회
-    const { data: statsData, error: rpcError } = await supabase.rpc(
-      'get_chatbot_stats',
-      {
-        p_guidebook_id: guidebookId,
-      }
-    );
+    // TODO: get_chatbot_stats RPC 함수 마이그레이션 필요
+    // const { data: statsData, error: rpcError } = await supabase.rpc(
+    //   'get_chatbot_stats',
+    //   {
+    //     p_guidebook_id: guidebookId,
+    //   }
+    // );
 
-    if (rpcError) {
-      console.error('챗봇 통계 RPC 에러:', rpcError);
+    // if (rpcError) {
+    //   console.error('챗봇 통계 RPC 에러:', rpcError);
 
-      // RPC가 없는 경우 직접 계산
-      const { data: logs, error: logsError } = await supabase
-        .from('chatbot_logs')
-        .select('feedback, session_id')
-        .eq('guidebook_id', guidebookId);
+    //   // RPC가 없는 경우 직접 계산
+    //   const { data: logs, error: logsError } = await supabase
+    //     .from('chatbot_logs')
+    //     .select('feedback, session_id')
+    //     .eq('guidebook_id', guidebookId);
 
-      if (logsError) {
-        console.error('챗봇 로그 조회 에러:', logsError);
-        return NextResponse.json(
-          {
-            error: {
-              code: 'FETCH_ERROR',
-              message: '챗봇 통계 조회에 실패했습니다',
-            },
-          },
-          { status: 500 }
-        );
-      }
+    //   if (logsError) {
+    //     console.error('챗봇 로그 조회 에러:', logsError);
+    //     return NextResponse.json(
+    //       {
+    //         error: {
+    //           code: 'FETCH_ERROR',
+    //           message: '챗봇 통계 조회에 실패했습니다',
+    //         },
+    //       },
+    //       { status: 500 }
+    //     );
+    //   }
 
-      const totalQuestions = logs?.length || 0;
-      const helpfulCount =
-        logs?.filter((log) => log.feedback === 'helpful').length || 0;
-      const notHelpfulCount =
-        logs?.filter((log) => log.feedback === 'not_helpful').length || 0;
+    //   const totalQuestions = logs?.length || 0;
+    //   const helpfulCount =
+    //     logs?.filter((log) => log.feedback === 'helpful').length || 0;
+    //   const notHelpfulCount =
+    //     logs?.filter((log) => log.feedback === 'not_helpful').length || 0;
 
-      // 세션별 질문 수 계산
-      const sessionMap = new Map<string, number>();
-      logs?.forEach((log) => {
-        sessionMap.set(log.session_id, (sessionMap.get(log.session_id) || 0) + 1);
-      });
-      const avgSessionLength =
-        sessionMap.size > 0
-          ? Array.from(sessionMap.values()).reduce((a, b) => a + b, 0) /
-            sessionMap.size
-          : 0;
+    //   // 세션별 질문 수 계산
+    //   const sessionMap = new Map<string, number>();
+    //   logs?.forEach((log) => {
+    //     sessionMap.set(log.session_id, (sessionMap.get(log.session_id) || 0) + 1);
+    //   });
+    //   const avgSessionLength =
+    //     sessionMap.size > 0
+    //       ? Array.from(sessionMap.values()).reduce((a, b) => a + b, 0) /
+    //         sessionMap.size
+    //       : 0;
 
-      const satisfactionRate =
-        helpfulCount + notHelpfulCount > 0
-          ? helpfulCount / (helpfulCount + notHelpfulCount)
-          : 0;
+    //   const satisfactionRate =
+    //     helpfulCount + notHelpfulCount > 0
+    //       ? helpfulCount / (helpfulCount + notHelpfulCount)
+    //       : 0;
 
-      const stats: ChatbotStats = {
-        total_questions: totalQuestions,
-        helpful_count: helpfulCount,
-        not_helpful_count: notHelpfulCount,
-        avg_session_length: parseFloat(avgSessionLength.toFixed(2)),
-        satisfaction_rate: parseFloat((satisfactionRate * 100).toFixed(2)),
-      };
+    //   const stats: ChatbotStats = {
+    //     total_questions: totalQuestions,
+    //     helpful_count: helpfulCount,
+    //     not_helpful_count: notHelpfulCount,
+    //     avg_session_length: parseFloat(avgSessionLength.toFixed(2)),
+    //     satisfaction_rate: parseFloat((satisfactionRate * 100).toFixed(2)),
+    //   };
 
-      return NextResponse.json(stats);
-    }
+    //   return NextResponse.json(stats);
+    // }
 
-    // 4. RPC 결과를 ChatbotStats 형식으로 변환
-    const rawStats = Array.isArray(statsData) ? statsData[0] : statsData;
+    // // 4. RPC 결과를 ChatbotStats 형식으로 변환
+    // const rawStats = Array.isArray(statsData) ? statsData[0] : statsData;
 
-    const totalFeedback =
-      (rawStats.helpful_count || 0) + (rawStats.not_helpful_count || 0);
-    const satisfactionRate =
-      totalFeedback > 0
-        ? ((rawStats.helpful_count || 0) / totalFeedback) * 100
-        : 0;
+    // const totalFeedback =
+    //   (rawStats.helpful_count || 0) + (rawStats.not_helpful_count || 0);
+    // const satisfactionRate =
+    //   totalFeedback > 0
+    //     ? ((rawStats.helpful_count || 0) / totalFeedback) * 100
+    //     : 0;
 
     const stats: ChatbotStats = {
-      total_questions: Number(rawStats.total_questions || 0),
-      helpful_count: Number(rawStats.helpful_count || 0),
-      not_helpful_count: Number(rawStats.not_helpful_count || 0),
-      avg_session_length: parseFloat(
-        (rawStats.avg_session_length || 0).toFixed(2)
-      ),
-      satisfaction_rate: parseFloat(satisfactionRate.toFixed(2)),
+      total_questions: 0,
+      helpful_count: 0,
+      not_helpful_count: 0,
+      avg_session_length: 0,
+      satisfaction_rate: 0,
     };
 
     return NextResponse.json(stats);

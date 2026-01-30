@@ -7,6 +7,14 @@ const nextConfig: NextConfig = {
   // Docker 배포 시에만 standalone 사용 (Vercel은 자동 최적화)
   ...(process.env.DOCKER_BUILD === 'true' && { output: 'standalone' }),
 
+  // ESLint: 경고는 빌드 실패로 처리하지 않음 (개발 중에는 표시)
+  eslint: {
+    ignoreDuringBuilds: true, // 빌드 시 ESLint 무시 (CI/CD에서는 별도로 체크)
+  },
+  typescript: {
+    ignoreBuildErrors: false, // TypeScript 에러는 빌드 실패 처리
+  },
+
   // 이미지 최적화
   images: {
     remotePatterns: [

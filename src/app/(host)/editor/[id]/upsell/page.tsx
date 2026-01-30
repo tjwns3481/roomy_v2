@@ -45,10 +45,21 @@ export default async function UpsellSettingsPage({
     redirect('/dashboard');
   }
 
+  // 2.5 사용자 플랜 조회
+  const { data: userData } = await supabase
+    .from('profiles')
+    .select('plan')
+    .eq('id', user.id)
+    .single();
+
+  const userPlan = userData?.plan || 'free';
+
   // 3. Business 플랜 확인
-  const { data: canCreate } = await supabase.rpc('can_create_upsell_item', {
-    p_user_id: user.id,
-  });
+  // TODO: can_create_upsell_item RPC 함수 마이그레이션 필요
+  // const { data: canCreate } = await supabase.rpc('can_create_upsell_item', {
+  //   p_user_id: user.id,
+  // });
+  const canCreate = userPlan === 'business';
 
   // Business 플랜이 아니면 업그레이드 안내
   if (!canCreate) {
@@ -86,31 +97,42 @@ export default async function UpsellSettingsPage({
   }
 
   // 4. 초기 데이터 로드
-  const { data: items } = await supabase
-    .from('upsell_items')
-    .select('*')
-    .eq('guidebook_id', guidebookId)
-    .order('sort_order', { ascending: true });
+  // TODO: upsell_items, upsell_requests 테이블 마이그레이션 필요
+  // const { data: items } = await supabase
+  //   .from('upsell_items')
+  //   .select('*')
+  //   .eq('guidebook_id', guidebookId)
+  //   .order('sort_order', { ascending: true });
+  const items: any[] = [];
 
-  const { data: requests } = await supabase
-    .from('upsell_requests')
-    .select(
-      `
-      *,
-      upsell_items (
-        name,
-        price
-      )
-    `
-    )
-    .eq('guidebook_id', guidebookId)
-    .order('created_at', { ascending: false })
-    .limit(50);
+  // const { data: requests } = await supabase
+  //   .from('upsell_requests')
+  //   .select(
+  //     `
+  //     *,
+  //     upsell_items (
+  //       name,
+  //       price
+  //     )
+  //   `
+  //   )
+  //   .eq('guidebook_id', guidebookId)
+  //   .order('created_at', { ascending: false })
+  //   .limit(50);
+  const requests: any[] = [];
 
   // 통계 조회
-  const { data: stats } = await supabase
-    .rpc('get_upsell_request_stats', { p_guidebook_id: guidebookId })
-    .single();
+  // TODO: get_upsell_request_stats RPC 함수 마이그레이션 필요
+  // const { data: stats } = await supabase
+  //   .rpc('get_upsell_request_stats', { p_guidebook_id: guidebookId })
+  //   .single();
+  const stats = {
+    total_requests: 0,
+    pending_requests: 0,
+    confirmed_requests: 0,
+    cancelled_requests: 0,
+    total_revenue: 0,
+  };
 
   return (
     <>

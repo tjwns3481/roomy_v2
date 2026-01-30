@@ -14,7 +14,7 @@ const plans = [
     name: 'Free',
     description: '개인 호스트에게 적합',
     price: 0,
-    priceLabel: '무료',
+    priceNumber: '무료',
     features: [
       '가이드북 1개',
       'AI 생성 3회/월',
@@ -30,7 +30,7 @@ const plans = [
     name: 'Pro',
     description: '전문 호스트를 위한',
     price: 29000,
-    priceLabel: '₩29K',
+    priceNumber: '29,000',
     features: [
       '가이드북 5개',
       'AI 생성 30회/월',
@@ -47,7 +47,7 @@ const plans = [
     name: 'Business',
     description: '숙박 사업자를 위한',
     price: 99000,
-    priceLabel: '₩99K',
+    priceNumber: '99,000',
     features: [
       '무제한 가이드북',
       '무제한 AI 생성',
@@ -103,8 +103,8 @@ export function PricingSection() {
               className={`relative bg-white rounded-3xl p-8 lg:p-10 transition-all duration-500
                 ${
                   plan.popular
-                    ? 'border-2 border-ink shadow-soft-lg scale-105 z-10'
-                    : 'border border-cloud hover:border-coral/30 hover:shadow-soft'
+                    ? 'border-2 border-coral shadow-airbnb scale-105 md:scale-110 z-10'
+                    : 'border border-cloud hover:border-coral/30 hover:shadow-airbnb-sm hover:-translate-y-1'
                 }
               `}
             >
@@ -126,18 +126,25 @@ export function PricingSection() {
 
               {/* 가격 */}
               <div className="mb-8 pb-8 border-b border-cloud">
-                <div className="flex items-baseline gap-2">
-                  <span className="text-5xl font-bold text-ink tracking-tight">
-                    {plan.priceLabel}
-                  </span>
-                  {plan.price > 0 && (
-                    <span className="text-stone">/월</span>
-                  )}
-                </div>
-                {plan.price > 0 && (
-                  <p className="mt-2 text-sm text-mist">
-                    연간 결제 시 2개월 무료
-                  </p>
+                {plan.price === 0 ? (
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-5xl font-bold text-ink tracking-tight">
+                      무료
+                    </span>
+                  </div>
+                ) : (
+                  <>
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-xl font-semibold text-charcoal">₩</span>
+                      <span className="text-5xl font-bold text-ink tracking-tight">
+                        {plan.priceNumber}
+                      </span>
+                      <span className="text-charcoal font-medium">/월</span>
+                    </div>
+                    <p className="mt-2 text-sm text-mist">
+                      연간 결제 시 2개월 무료 (₩{(plan.price * 10).toLocaleString()}/년)
+                    </p>
+                  </>
                 )}
               </div>
 

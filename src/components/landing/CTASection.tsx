@@ -71,9 +71,10 @@ export function CTASection() {
         >
           <Link
             href="/signup"
+            aria-label="무료로 가이드북 만들기 - 회원가입"
             className="group inline-flex items-center gap-3 px-10 py-5 bg-white text-ink rounded-full
               font-semibold text-lg shadow-soft-lg hover:shadow-2xl
-              hover:scale-105 transition-all duration-300"
+              hover:scale-105 transition-all duration-300 will-change-transform"
           >
             무료로 가이드북 만들기
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />

@@ -32,7 +32,7 @@ const SendAlimtalkSchema = z.object({
   templateCode: z.string().min(1),
   recipientPhone: z.string().min(10),
   recipientName: z.string().optional(),
-  templateParams: z.record(z.string()),
+  templateParams: z.record(z.string(), z.string()),
 });
 
 type SendAlimtalkRequest = z.infer<typeof SendAlimtalkSchema>;
@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
           error: {
             code: 'VALIDATION_ERROR',
             message: '잘못된 요청입니다.',
-            details: validation.error.errors.map((e) => e.message).join(', '),
+            details: validation.error.issues.map((e) => e.message).join(', '),
           },
         },
         { status: 400 }
@@ -173,7 +173,7 @@ export async function POST(request: NextRequest) {
       template_code: templateCode,
       recipient_phone: recipientPhone,
       recipient_name: recipientName || null,
-      status: result.success ? 'sent' : 'failed',
+      status: (result.success ? 'sent' : 'failed') as 'sent' | 'failed',
       sent_at: result.success ? new Date().toISOString() : null,
       error_message: result.error?.message || null,
       error_code: result.error?.code || null,

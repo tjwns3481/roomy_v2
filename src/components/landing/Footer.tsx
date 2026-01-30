@@ -46,7 +46,7 @@ export function Footer() {
               </div>
               <span className="text-xl font-bold text-ink tracking-tight">Roomy</span>
             </Link>
-            <p className="mt-6 text-stone leading-relaxed max-w-sm">
+            <p className="mt-6 text-charcoal leading-relaxed max-w-sm">
               한국형 디지털 게스트 가이드북 SaaS
               <br />
               AI로 간편하게, 게스트에게 완벽하게
@@ -85,7 +85,7 @@ export function Footer() {
                   <li key={link.name}>
                     <Link
                       href={link.href}
-                      className="text-stone hover:text-ink transition-colors duration-300"
+                      className="text-charcoal hover:text-ink transition-colors duration-300"
                     >
                       {link.name}
                     </Link>
@@ -104,7 +104,7 @@ export function Footer() {
                   <li key={link.name}>
                     <Link
                       href={link.href}
-                      className="text-stone hover:text-ink transition-colors duration-300"
+                      className="text-charcoal hover:text-ink transition-colors duration-300"
                     >
                       {link.name}
                     </Link>
@@ -123,7 +123,7 @@ export function Footer() {
                   <li key={link.name}>
                     <Link
                       href={link.href}
-                      className="text-stone hover:text-ink transition-colors duration-300"
+                      className="text-charcoal hover:text-ink transition-colors duration-300"
                     >
                       {link.name}
                     </Link>

@@ -12,7 +12,7 @@ import { nanoid } from 'nanoid';
  */
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createServerClient();
+    const supabase = await createServerClient();
 
     // 1. 인증 확인
     const {

@@ -138,12 +138,14 @@ export default async function GuestGuidePage({ params }: PageProps) {
   );
 
   // 7. 리뷰 설정 조회
-  const { data: reviewSettings } = await supabase
-    .from('review_settings')
-    .select('*')
-    .eq('guidebook_id', guidebook.id)
-    .eq('is_enabled', true)
-    .single();
+  // TODO: review_settings 테이블 마이그레이션 필요
+  // const { data: reviewSettings } = await supabase
+  //   .from('review_settings')
+  //   .select('*')
+  //   .eq('guidebook_id', guidebook.id)
+  //   .eq('is_enabled', true)
+  //   .single();
+  const reviewSettings = null;
 
   // 8. JSON-LD 데이터 준비
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://roomy.co.kr';
@@ -226,7 +228,7 @@ export default async function GuestGuidePage({ params }: PageProps) {
         <ChatWidget
           guidebookId={guidebook.id}
           guidebookTitle={guidebook.title}
-          themeColor={guidebook.theme_color || '#FF385C'}
+          themeColor={'#FF385C'}
         />
 
         {/* Review Request Popup (P8-S12-T1) */}

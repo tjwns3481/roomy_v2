@@ -78,7 +78,7 @@ function mapDBRowToBlock(row: DBBlockRow): Block {
     guidebook_id: row.guideId || row.guidebook_id || '',
     type: DB_TO_BLOCK_TYPE[row.type] || (row.type.toLowerCase() as BlockType),
     order_index: row.order ?? row.order_index ?? 0,
-    content: row.content as BlockContent,
+    content: row.content as unknown as BlockContent,
     is_visible: row.is_visible ?? true,
     created_at: row.createdAt || row.created_at,
     updated_at: row.updatedAt || row.updated_at,
@@ -171,7 +171,7 @@ export const BlockService = {
       );
     }
 
-    return (data || []).map((row: DBBlockRow) => mapDBRowToBlock(row));
+    return (data || []).map((row: any) => mapDBRowToBlock(row));
   },
 
   /**
@@ -245,18 +245,18 @@ export const BlockService = {
       );
     }
 
-    // 3. order 계산 (없으면 마지막에 추가) - DB는 'order' 컬럼 사용
+    // 3. order 계산 (없으면 마지막에 추가) - DB는 'order_index' 컬럼 사용
     let orderValue = input.order_index;
     if (orderValue === undefined) {
       const { data: maxOrderData } = await supabase
         .from('blocks')
-        .select('order')
-        .eq('guideId', input.guidebook_id)
-        .order('order', { ascending: false })
+        .select('order_index')
+        .eq('guidebook_id', input.guidebook_id)
+        .order('order_index', { ascending: false })
         .limit(1)
         .single();
 
-      orderValue = maxOrderData ? (maxOrderData.order as number) + 1 : 0;
+      orderValue = maxOrderData ? (maxOrderData.order_index as number) + 1 : 0;
     }
 
     // 4. 블록 생성 (DB는 대문자 BlockType enum 사용)
@@ -268,16 +268,13 @@ export const BlockService = {
       .from('blocks')
       .insert({
         id: blockId,
-        guideId: input.guidebook_id,
-        type: dbType,
-        order: orderValue,
-        content: validation.data as unknown as Record<string, never>,
-        createdAt: now,
-        updatedAt: now,
-        // 새 스키마 컬럼도 함께 설정 (호환성)
         guidebook_id: input.guidebook_id,
+        type: input.type, // Use the original BlockType, not DB type
         order_index: orderValue,
+        content: validation.data as unknown as Record<string, never>,
         is_visible: input.is_visible ?? true,
+        created_at: now,
+        updated_at: now,
       })
       .select()
       .single();

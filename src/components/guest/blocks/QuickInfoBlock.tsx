@@ -62,8 +62,8 @@ export function QuickInfoBlock({ content }: QuickInfoBlockProps) {
       {content.wifi && (content.wifi.ssid || content.wifi.password) && (
         <div className="bg-white border border-border rounded-xl p-6 shadow-airbnb-sm hover:shadow-airbnb-md transition-shadow">
           <div className="flex items-start gap-4">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-secondary/10">
-              <Wifi className="h-7 w-7 text-secondary" />
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-mint/10">
+              <Wifi className="h-7 w-7 text-mint" />
             </div>
             <div className="flex-1 space-y-3">
               <p className="text-h4 font-semibold text-text-primary">와이파이</p>
@@ -139,8 +139,8 @@ export function QuickInfoBlock({ content }: QuickInfoBlockProps) {
       {content.doorLock && (content.doorLock.password || content.doorLock.instructions) && (
         <div className="bg-white border border-border rounded-xl p-6 shadow-airbnb-sm hover:shadow-airbnb-md transition-shadow">
           <div className="flex items-start gap-4">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-accent/10">
-              <Lock className="h-7 w-7 text-accent" />
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-amber/10">
+              <Lock className="h-7 w-7 text-amber" />
             </div>
             <div className="flex-1 space-y-3">
               <p className="text-h4 font-semibold text-text-primary">도어락</p>
@@ -200,37 +200,39 @@ export function QuickInfoBlock({ content }: QuickInfoBlockProps) {
       )}
 
       {/* 주소 */}
-      <div className="bg-white border border-border rounded-xl p-6 shadow-airbnb-sm hover:shadow-airbnb-md transition-shadow">
-        <div className="flex items-start gap-4">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-error/10">
-            <MapPin className="h-7 w-7 text-error" />
-          </div>
-          <div className="flex-1">
-            <p className="text-h4 font-semibold text-text-primary mb-3">주소</p>
-            <div className="flex items-start justify-between gap-3 bg-surface rounded-xl p-4">
-              <p className="text-body text-text-primary leading-relaxed flex-1">{content.address}</p>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => copyToClipboard(content.address, 'address')}
-                className="flex-shrink-0 min-h-[44px] min-w-[44px]"
-                aria-label="주소 복사"
-              >
-                {copiedField === 'address' ? (
-                  <Check className="h-5 w-5 text-success" />
-                ) : (
-                  <Copy className="h-5 w-5 text-text-secondary" />
-                )}
-              </Button>
+      {content.address && (
+        <div className="bg-white border border-border rounded-xl p-6 shadow-airbnb-sm hover:shadow-airbnb-md transition-shadow">
+          <div className="flex items-start gap-4">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-coral/10">
+              <MapPin className="h-7 w-7 text-coral" />
             </div>
-            {content.coordinates && (
-              <p className="mt-3 text-body-sm text-text-tertiary">
-                좌표: {content.coordinates.lat.toFixed(6)}, {content.coordinates.lng.toFixed(6)}
-              </p>
-            )}
+            <div className="flex-1">
+              <p className="text-h4 font-semibold text-text-primary mb-3">주소</p>
+              <div className="flex items-start justify-between gap-3 bg-surface rounded-xl p-4">
+                <p className="text-body text-text-primary leading-relaxed flex-1">{content.address}</p>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => copyToClipboard(content.address!, 'address')}
+                  className="flex-shrink-0 min-h-[44px] min-w-[44px]"
+                  aria-label="주소 복사"
+                >
+                  {copiedField === 'address' ? (
+                    <Check className="h-5 w-5 text-success" />
+                  ) : (
+                    <Copy className="h-5 w-5 text-text-secondary" />
+                  )}
+                </Button>
+              </div>
+              {content.coordinates && (
+                <p className="mt-3 text-body-sm text-tertiary">
+                  좌표: {content.coordinates.lat.toFixed(6)}, {content.coordinates.lng.toFixed(6)}
+                </p>
+              )}
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

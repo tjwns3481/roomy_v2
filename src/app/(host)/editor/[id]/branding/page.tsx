@@ -14,7 +14,7 @@ interface BrandingPageProps {
  */
 export default async function BrandingPage({ params }: BrandingPageProps) {
   const { id } = await params;
-  const supabase = createServerClient();
+  const supabase = await createServerClient();
 
   // 1. 인증 확인
   const {
@@ -39,7 +39,7 @@ export default async function BrandingPage({ params }: BrandingPageProps) {
 
   // 3. 사용자 플랜 조회
   const { data: userData, error: userError } = await supabase
-    .from('users')
+    .from('profiles')
     .select('id, plan')
     .eq('id', user.id)
     .single();
@@ -49,11 +49,13 @@ export default async function BrandingPage({ params }: BrandingPageProps) {
   }
 
   // 4. 브랜딩 조회 (없으면 null)
-  const { data: branding } = await supabase
-    .from('brandings')
-    .select('*')
-    .eq('guidebook_id', id)
-    .single();
+  // TODO: brandings 테이블 마이그레이션 필요
+  // const { data: branding } = await supabase
+  //   .from('brandings')
+  //   .select('*')
+  //   .eq('guidebook_id', id)
+  //   .single();
+  const branding = null;
 
   return (
     <div className="container mx-auto py-8 px-4">

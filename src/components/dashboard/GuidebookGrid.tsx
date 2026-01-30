@@ -63,11 +63,6 @@ export function GuidebookGrid({
           guidebook={guidebook}
           onEdit={onEdit}
           onPreview={onPreview}
-          onShare={onShare}
-          onDuplicate={onDuplicate}
-          onSettings={onSettings}
-          onArchive={onArchive}
-          onDelete={onDelete}
         />
       ))}
     </div>

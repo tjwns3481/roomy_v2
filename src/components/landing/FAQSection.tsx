@@ -55,17 +55,18 @@ function FAQItem({
   onToggle: () => void;
 }) {
   return (
-    <div className="border-b border-cloud last:border-0">
+    <div className="border-b border-cloud last:border-0 hover:bg-snow/50 transition-colors duration-300 px-4 -mx-4 rounded-lg">
       <button
         onClick={onToggle}
         className="w-full py-6 flex items-start justify-between gap-4 text-left group"
+        aria-expanded={isOpen}
       >
         <span className="text-lg font-semibold text-ink group-hover:text-coral transition-colors duration-300">
           {question}
         </span>
         <div
           className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300
-            ${isOpen ? 'bg-coral text-white' : 'bg-snow text-stone group-hover:bg-coral-light'}`}
+            ${isOpen ? 'bg-coral text-white rotate-90' : 'bg-snow text-mist group-hover:bg-coral-light group-hover:text-coral'}`}
         >
           {isOpen ? (
             <Minus className="w-4 h-4" />
@@ -141,15 +142,16 @@ export function FAQSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="mt-12 text-center"
+          className="mt-12 text-center bg-white rounded-3xl p-8 border border-cloud"
         >
-          <p className="text-stone mb-4">
+          <p className="text-charcoal mb-4 text-lg">
             다른 질문이 있으신가요?
           </p>
           <Link
             href="mailto:support@roomy.kr"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-ink text-white rounded-full font-semibold
-              hover:bg-charcoal transition-colors duration-300"
+            aria-label="고객센터 이메일로 문의하기"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-coral text-white rounded-full font-semibold
+              shadow-coral hover:shadow-coral-lg hover:bg-coral-dark transition-all duration-300"
           >
             고객센터 문의하기
           </Link>

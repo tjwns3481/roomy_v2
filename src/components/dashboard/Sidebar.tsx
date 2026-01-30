@@ -20,7 +20,7 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <div className="h-full bg-white border-r border-gray-200 overflow-y-auto">
+    <div className="h-full bg-white border-r border-cloud/30 overflow-y-auto">
       <nav className="p-4 space-y-1">
         {menuItems.map((item) => {
           const Icon = item.icon;
@@ -31,13 +31,16 @@ export default function Sidebar() {
               key={item.href}
               href={item.href}
               className={cn(
-                'flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all',
+                'flex items-center gap-3 px-4 py-3 rounded-airbnb text-sm font-medium transition-all duration-200',
                 isActive
-                  ? 'bg-primary/10 text-primary border-l-4 border-primary'
-                  : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                  ? 'bg-coral-light text-coral border-l-3 border-coral shadow-soft'
+                  : 'text-charcoal hover:bg-snow hover:text-ink'
               )}
             >
-              <Icon className="w-5 h-5" />
+              <Icon className={cn(
+                'w-5 h-5 transition-colors',
+                isActive ? 'text-coral' : 'text-stone'
+              )} />
               <span>{item.label}</span>
             </Link>
           );

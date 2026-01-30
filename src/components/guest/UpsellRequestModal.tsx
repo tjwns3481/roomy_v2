@@ -11,7 +11,7 @@ import Image from 'next/image';
 import { toast } from 'sonner';
 import { X } from 'lucide-react';
 import type { UpsellItem } from '@/types/upsell';
-import { toastMessages } from '@/lib/toast';
+import { toastMessages } from '@/lib/toast-messages';
 
 // 요청 폼 스키마
 const requestFormSchema = z.object({
@@ -169,7 +169,7 @@ export function UpsellRequestModal({
                   {...register('guest_name')}
                   className="w-full px-4 py-3 border border-border rounded-lg
                     focus:outline-none focus:border-text-primary focus:ring-1 focus:ring-text-primary
-                    placeholder:text-text-tertiary transition-colors"
+                    placeholder:text-tertiary transition-colors"
                   placeholder="홍길동"
                   disabled={isSubmitting}
                 />
@@ -192,7 +192,7 @@ export function UpsellRequestModal({
                   {...register('guest_contact')}
                   className="w-full px-4 py-3 border border-border rounded-lg
                     focus:outline-none focus:border-text-primary focus:ring-1 focus:ring-text-primary
-                    placeholder:text-text-tertiary transition-colors"
+                    placeholder:text-tertiary transition-colors"
                   placeholder="010-1234-5678"
                   disabled={isSubmitting}
                 />
@@ -217,7 +217,7 @@ export function UpsellRequestModal({
                   rows={4}
                   className="w-full px-4 py-3 border border-border rounded-lg
                     focus:outline-none focus:border-text-primary focus:ring-1 focus:ring-text-primary
-                    placeholder:text-text-tertiary transition-colors resize-none"
+                    placeholder:text-tertiary transition-colors resize-none"
                   placeholder="추가로 전달하실 내용이 있으시면 작성해주세요"
                   disabled={isSubmitting}
                 />

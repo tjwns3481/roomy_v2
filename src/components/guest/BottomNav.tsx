@@ -152,7 +152,7 @@ export function BottomNav({ availableBlocks }: BottomNavProps) {
                 'min-w-[64px] min-h-[64px]', // 44x44px 최소 터치 타겟
                 'hover:bg-gray-100 active:scale-95',
                 isActive
-                  ? 'text-blue-600 bg-blue-50'
+                  ? 'text-coral bg-coral-light'
                   : 'text-gray-600 hover:text-gray-900'
               )}
               aria-label={`${item.label}로 이동`}

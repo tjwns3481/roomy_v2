@@ -38,8 +38,8 @@ export function UpsellItemForm({
     formState: { errors },
     watch,
     setValue,
-  } = useForm<CreateUpsellItemInput>({
-    resolver: zodResolver(createUpsellItemSchema),
+  } = useForm<any>({
+    resolver: zodResolver(createUpsellItemSchema) as any,
     defaultValues: {
       name: item?.name || '',
       description: item?.description || '',
@@ -116,7 +116,7 @@ export function UpsellItemForm({
           disabled={isSubmitting}
         />
         {errors.name && (
-          <p className="text-small text-error">{errors.name.message}</p>
+          <p className="text-small text-error">{errors.name?.message as string}</p>
         )}
       </div>
 
@@ -131,7 +131,7 @@ export function UpsellItemForm({
           disabled={isSubmitting}
         />
         {errors.description && (
-          <p className="text-small text-error">{errors.description.message}</p>
+          <p className="text-small text-error">{errors.description?.message as string}</p>
         )}
       </div>
 
@@ -148,7 +148,7 @@ export function UpsellItemForm({
           disabled={isSubmitting}
         />
         {errors.price && (
-          <p className="text-small text-error">{errors.price.message}</p>
+          <p className="text-small text-error">{errors.price?.message as string}</p>
         )}
       </div>
 
